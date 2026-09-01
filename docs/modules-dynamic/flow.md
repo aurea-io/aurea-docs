@@ -327,6 +327,6 @@ Por tenant:
 
 ## 12. Referencias
 
-- [Especificación técnica](tecnico/modulos-dinamicos.md)
-- [Decisiones y respuestas](decisiones-modulos-dinamicos.md)
-- [POC y criterios de aceptación](poc-modulos-dinamicos.md)
+- [Especificación técnica](technical.md)
+- [Decisiones y respuestas](decisions.md)
+- [POC y criterios de aceptación](product-scope.md)
