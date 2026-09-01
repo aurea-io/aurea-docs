@@ -17,12 +17,11 @@
 
 Los roles de plataforma y de tenant tienen scopes independientes:
 
-```text
-Platform: platform_owner, platform_readonly
-Tenant: tenant_admin, employee, bookings_manager, inventory_manager
-```
+Los roles se almacenan en la base de datos y son dinámicos; no se debe asumir una lista fija en el código. Como roles iniciales de plataforma se contemplan `platform_owner` y `platform_readonly`, pero el catálogo puede agregar o modificar roles sin una nueva versión del frontend.
 
-Un empleado puede tener varios roles. Las capabilities declaran permisos; los roles contienen esos permisos. El scope platform queda reservado a usuarios de AUREA. `platform_owner` debe ser explícito y auditable, no un permiso universal llamado simplemente `owner`.
+Los roles están asociados a funciones/capabilities. Por ejemplo, una función puede ser `service.booking.photo_upload` y un permiso de solo lectura puede representarse como `service.booking.photo_upload.read`. El modelo debe permitir permisos de lectura, escritura, administración y futuras acciones sin hardcodear nombres de roles.
+
+El scope platform queda reservado a usuarios de AUREA. `platform_owner` debe ser explícito y auditable, no un permiso universal llamado simplemente `owner`. El administrador de un tenant puede gestionar los empleados de su empresa y sus roles, sin poder conceder roles de plataforma.
 
 MFA y restricciones geográficas son capas adicionales a evaluar; la primera regla geográfica será por país.
 
@@ -43,28 +42,25 @@ Una función no pertenece a una sola pantalla. `services.bookings.photo_upload` 
 ### Planes, créditos y addons
 
 - Un tenant puede tener un plan y addons.
-- Un plan puede conceder créditos para seleccionar módulos.
+- Planes, addons, créditos, precios y sus reglas se almacenan en la base de datos y son configurables desde el backoffice AUREA.
+- El código consume el catálogo dinámico; no debe depender de que existan exactamente `Basic`, `Pro` o `Enterprise`.
 - Los límites operativos se gestionan dentro de cada módulo.
 - Planes, precios, membresías y addons se administran desde el backoffice AUREA.
 - Los precios conservan historial.
 
-La recomendación inicial es usar créditos mensuales no acumulables. Al desactivar un módulo, los créditos se liberan durante el período actual. Los addons tienen vencimiento y renovación según la suscripción.
+La unidad de cobro inicial es el peso argentino (ARS), con período mensual. Se admite el pago adelantado de varios meses, por ejemplo seis meses. Mercado Pago será el primer proveedor, encapsulado detrás de un adapter para poder reemplazarlo.
 
-```text
-Plan Pro: 100 créditos mensuales
-Reservas: 40 créditos
-Stock: 30 créditos
-Pagos: 20 créditos
-Addon: +100 créditos mensuales
-```
+La cantidad de créditos y las funcionalidades que consumen créditos se definirán en el catálogo de datos cuando avance el desarrollo. No deben quedar valores comerciales fijos en el código. Al desactivar un módulo, los créditos se liberan durante el período actual. Los addons tienen vencimiento y renovación según la suscripción, configurable desde la plataforma.
+
+Los ejemplos de planes, módulos y créditos son datos de seed o configuración, no reglas compiladas. La POC puede utilizar valores de demostración siempre que sean editables desde la base de datos.
 
 ### Suscripciones vencidas
 
 ```text
 Pago vencido:
-- la página pública sigue igual durante 14 días;
-- el backoffice queda inhabilitado;
+- el backoffice Aurea y el backoffice del tenant quedan inhabilitados inmediatamente;
 - se muestra una notificación;
+- la página pública del cliente final sigue disponible durante 14 días;
 - no se borran datos.
 
 Después de 14 días:
@@ -82,14 +78,16 @@ La regla se implementa en una política central, no endpoint por endpoint.
 - No se permite un layout completamente libre ni CSS arbitrario inicialmente.
 - Se recomienda preview antes de publicar.
 - Se conservan las últimas cuatro versiones publicadas y un borrador.
+- Los templates y sus límites son configurables por `platform_owner`.
 - Los campos adicionales pueden ser dinámicos, pero deben validarse contra un catálogo de tipos y keys.
-- Se contemplan dominios personalizados.
+- La resolución pública inicial utiliza `publicId`. Los dominios personalizados quedan como evolución posterior.
+- Las imágenes se almacenan inicialmente mediante Cloudinary, detrás de un adapter reemplazable.
 
 ### Theme Service
 
 - MongoDB guarda tokens estructurados.
 - `Theme Service` genera y sirve CSS por HTTP.
-- El endpoint es público y usa un identificador opaco/versionado: `/style/123123123.css?v=4`.
+- El endpoint es público y usa el `publicId` del tenant con versionado: `/style/{publicId}.css?v=4`.
 - Redis es opcional y no crítico.
 - MongoDB es crítico: si no está disponible, el servicio responde `503`.
 - El servicio puede escalar en servidores separados para tenants con mucho tráfico.
@@ -121,15 +119,13 @@ Revocar sesiones significa invalidar las sesiones activas cuando se elimina un e
 
 Un CDN no implica administrar archivos manualmente. Puede cachear la respuesta de `Browser → CDN → Theme Service → MongoDB`. Se puede omitir inicialmente y agregar cuando un tenant necesite más capacidad.
 
-## Preguntas que siguen abiertas
+## Decisiones que quedan configurables, no bloqueantes
 
-1. ¿Los créditos se descuentan por activación o también por consumo operativo?
-2. ¿Qué proveedor de pagos y facturación se integrará?
-3. ¿Los addons se renuevan automáticamente?
-4. Después de los 14 días, ¿se bloquean todas las operaciones públicas o solo las nuevas?
-5. ¿Qué países se permiten en la primera etapa?
-6. ¿Qué proveedor se usará para dominios personalizados y verificación DNS?
-7. ¿Qué funciones tendrán TTL y cuál será su período de retención?
-8. ¿MFA será obligatorio para `platform_owner` desde el primer release?
-9. ¿Qué puede consultar un usuario de plataforma al inspeccionar un tenant?
-10. ¿La POC debe demostrar créditos y addons o alcanza con documentarlos?
+Estas definiciones no necesitan resolverse antes de implementar el modelo y los adapters. Deben persistirse como configuración o quedar explícitamente parametrizadas:
+
+1. Qué funcionalidades consumen créditos y si el descuento ocurre al activar o durante el consumo operativo.
+2. Renovación automática de addons y estados específicos de suscripción de Mercado Pago.
+3. Política pública posterior a los 14 días de vencimiento; por defecto se bloquean nuevas operaciones y se conservan los datos.
+4. Países permitidos, reglas de TTL por función y obligatoriedad futura de MFA.
+5. Qué información puede consultar un usuario de plataforma al inspeccionar un tenant.
+6. Qué módulos y créditos se muestran en la POC; se pueden usar seeds de demostración editables.
