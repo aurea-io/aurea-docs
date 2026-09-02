@@ -76,7 +76,7 @@ Frontend internal:
 - El snapshot no incluía todavía un servicio Render para `backoffice-be-aurea-internal`; ese punto quedó resuelto en la corrida de producción enlazada arriba.
 - La publicación Vercel del frontend internal del snapshot no tenía aún la API productiva configurada; ese punto quedó resuelto en la corrida de producción enlazada arriba.
 - No se verificaron alta/edición real de tenants y planes contra MongoDB remoto en este snapshot; siguen pendientes como prueba de mutación separada.
-- Aún falta retirar los endpoints y pantallas Superadmin del backoffice cliente.
+- El retiro de los endpoints y pantallas Superadmin del backoffice cliente quedó integrado mediante [PR #97](https://github.com/aurea-io/backoffice-be-aurea/pull/97); este snapshot conserva el pendiente histórico para contexto.
 - La corrida autenticada con `platform_owner` ya está documentada en producción; queda una sesión específica para `platform_operator`, `401`, `403` y mutaciones. Seguimiento: [#41 — contrato de autenticación](https://github.com/aurea-io/aurea-docs/issues/41) y [#42 — rutas y migración](https://github.com/aurea-io/aurea-docs/issues/42), ambos OPEN en Project 2.
 
 ## Conclusión
