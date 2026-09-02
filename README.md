@@ -18,6 +18,12 @@ Acá vive todo lo que necesitás saber sobre el producto, la arquitectura y las 
 | [Decisiones](docs/modules-dynamic/decisions.md) | Respuestas confirmadas sobre tenants, roles, planes, personalización y lifecycle |
 | [Especificación técnica](docs/modules-dynamic/technical.md) | Modelo MongoDB, evaluación de capabilities, API, frontend y theming |
 
+### CI/CD
+
+| Documento | Qué encontrás |
+| --- | --- |
+| [CI/CD de Aurea](docs/ci.md) | Validaciones, autotag, publicación, deploy, smoke tests y notificaciones |
+
 ### Convenciones
 
 | Documento | Qué encontrás |
