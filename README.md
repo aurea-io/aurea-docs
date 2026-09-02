@@ -16,6 +16,7 @@ Repositorio central de documentación de Aurea.
 - [Alcance funcional](docs/modules-dynamic/product-scope.md)
 - [Decisiones de producto y arquitectura](docs/modules-dynamic/decisions.md)
 - [Especificación técnica](docs/modules-dynamic/technical.md)
+- [CI/CD de Aurea](docs/ci.md)
 
 Los assets visuales se encuentran en [`assets/modules-dynamic`](assets/modules-dynamic).
 
