@@ -8,6 +8,7 @@ Este directorio almacena el historial cronológico y versionado de las ejecucion
 
 | Sesión (Fecha/Hora) | BE Aurea (`backoffice-be`) | FE Aurea (`backoffice-fe`) | BE Cliente | FE Cliente (`pages-template`) | Estado | Reporte |
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+| [`26-09-02_14-08`](./26-09-02_14-08/README.md) | `main @ b4f3efb` | `main @ 428196e` | N/A | `NO DISPONIBLE` | 🔴 DESVÍO | Review integral: documentación, código, CI/CD, MCP, Chrome, capturas y issues. |
 | [`26-09-02_01-25`](./26-09-02_01-25/README.md) | `v0.18.0` | `v0.1.2` | N/A | `v0.4.0` | 🟡 AUDITORÍA | Auditoría de arquitectura profunda: taxonomía `services.bookings`, scopes `platform` vs `tenant` y tareas de refactor. |
 | [`26-09-02_01-03`](./26-09-02_01-03/README.md) | `v0.18.0` | `v0.1.2` | N/A | `v0.4.0` | 🟢 APROBADO | Pruebas E2E en Chrome, RBAC/FBAC, Theme Service y Gestión de Tenants. |
 
