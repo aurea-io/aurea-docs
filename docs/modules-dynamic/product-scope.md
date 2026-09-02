@@ -99,6 +99,54 @@ Los mockups son conceptuales: sirven para conversar sobre jerarquía, estados, p
 
 ## Implementación incremental
 
+## Contrato de alta y onboarding de tenants
+
+El alta se ejecuta desde el backoffice AUREA con scope `platform_owner` y es una
+operación auditable. El formulario requiere `name`, `slug`, `vertical` y
+`ownerEmail`; `slug` se normaliza a minúsculas, se valida como único y no se
+permite reutilizar uno ya asignado. El plan inicial y las features se resuelven
+desde el catálogo persistido; si no se selecciona un paquete explícito se usa
+la configuración por vertical.
+
+La creación del tenant y sus features base es atómica. Si el dueño ya existe,
+se crea su membership `TenantUser` con rol `OWNER`. Si todavía no existe, se
+genera una invitación única de rol `OWNER`, válida por 14 días. No se guardan
+claves temporales ni secretos en el frontend. El usuario completa el onboarding
+mediante `GET /api/invitations/verify/:code` y, después de autenticarse,
+`POST /api/invitations/accept` con `{ "code": "..." }`. La aceptación vincula
+la cuenta existente, marca la invitación como usada y es idempotente frente a
+reintentos.
+
+Una invitación expirada, usada o inexistente no revela datos del tenant y
+devuelve un error de validación. Los cambios de estado y la aceptación quedan
+registrados en auditoría.
+
+## Manifiestos y sincronización del catálogo
+
+Cada feature se declara en un manifiesto versionado dentro del repositorio que
+la implementa. La key canónica usa segmentos separados por punto y conserva
+el mismo valor en manifiesto, catálogo, capability, ruta y permiso. Por ejemplo:
+
+```yaml
+key: services.bookings.photo_upload
+module: services.bookings
+surface: [backoffice, public]
+requires: [services.bookings]
+permissions: [service.booking.photo_upload.read, service.booking.photo_upload.write]
+```
+
+El manifiesto es la fuente de identidad; la base de datos es la fuente de
+estado operativo (planes, addons, mantenimiento y activación por tenant). La
+sincronización oficial es un proceso idempotente de CI/deploy que valida keys,
+dependencias, superficies y duplicados antes de aplicar cambios. La UI puede
+administrar el estado del catálogo, pero no inventar keys ni modificar el
+contrato. Un cambio incompatible requiere una nueva key o una migración
+explícita.
+
+La validación se ejecuta con `aurea-ci/scripts/validate-manifests.sh` y el
+workflow compartido de manifests. Un manifiesto inválido bloquea el pipeline y
+no modifica el catálogo persistido.
+
 ### Fase 1 — contrato y datos
 
 - Crear manifiestos de `services.bookings`.

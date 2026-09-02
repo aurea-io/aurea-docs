@@ -5,6 +5,15 @@ La lógica común vive en [`aurea-ci`](https://github.com/aurea-io/aurea-ci) y l
 repositorios de aplicación consumen sus workflows reutilizables mediante
 referencias versionadas.
 
+## Repositorio legado de páginas
+
+`aurea-pages-template` está archivado y no forma parte del pipeline soportado.
+No se deben abrir cambios ni reutilizar sus workflows: su `release.yml` apunta
+a una interfaz obsoleta de `aurea-ci` y su `deploy.yml` responde a pushes a
+`main`, fuera del contrato actual basado en tags/releases. Las páginas nuevas
+deben vivir en el repositorio sucesor y consumir los callers vigentes de
+`aurea-ci`.
+
 ## Principios
 
 - Cada job tiene una única responsabilidad.
@@ -168,4 +177,3 @@ Tareas principales:
 - [#24 — Separar release, publicación y deploy](https://github.com/aurea-io/aurea-ci/issues/24)
 - [#25 — Notificaciones Discord triestado](https://github.com/aurea-io/aurea-ci/issues/25)
 - [#26 — Actualizar consumidores y smoke tests](https://github.com/aurea-io/aurea-ci/issues/26)
-
