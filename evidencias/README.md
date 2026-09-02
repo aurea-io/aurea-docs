@@ -112,4 +112,8 @@ No se debe interpretar silenciosamente una ambigüedad ni adaptar la documentaci
 
 La revisión sólo está completa y puede declararse aprobada cuando se cubrieron todos los repositorios y flujos dentro del alcance, se contrastaron código y Chrome contra la documentación con coincidencia exacta, se ejecutaron las validaciones disponibles, y no existe ningún desvío ni verificación crítica pendiente. Cada diferencia debe quedar trazada en un issue y en el reporte de [`evidencias/`](./). Si el pedido fue “todo”, no se puede cerrar la revisión por haber validado únicamente el flujo principal o una sola aplicación.
 
+### Capturas obligatorias
+
+El playbook debe tomar y **subir capturas numeradas** de cada flujo validado y de cada desvío relevante. Las imágenes deben guardarse en `evidencias/<YY-MM-DD>_<HH-mm>/capturas/`, enlazarse desde el README de la sesión y adjuntarse o enlazarse desde los issues correspondientes. No alcanza con describir una pantalla sin una captura verificable.
+
 ---
