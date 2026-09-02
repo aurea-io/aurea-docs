@@ -2,7 +2,7 @@
 
 ## Resumen ejecutivo
 
-Esta corrida verifica el avance de la separación entre el Backoffice interno de AUREA y el backoffice operativo de los tenants. Se validaron los artefactos publicados en `main`, los builds locales, la imagen Docker del backend internal y las rutas públicas/protegidas del frontend internal.
+Esta corrida es un snapshot histórico del avance de la separación entre el Backoffice interno de AUREA y el backoffice operativo de los tenants. Su fuente de verdad actualizada es la corrida de producción [`26-09-02_19-27_internal-platform-production`](../26-09-02_19-27_internal-platform-production/README.md), que incorpora Render, MongoDB remoto y la validación autenticada en Chrome.
 
 La separación todavía no puede declararse completa: el backend internal aún no está desplegado con una conexión MongoDB de producción y, por ese motivo, no se pudo ejecutar el flujo autenticado end-to-end ni validar mutaciones contra datos reales.
 
@@ -49,7 +49,7 @@ Resultado: ✅ El acceso no autenticado a `/platform/tenants` vuelve a la pantal
 
 ## Contratos implementados
 
-Backend internal:
+Backend internal (contratos vigentes; autenticación JWT de plataforma):
 
 - `GET /api/v1/platform/tenants`
 - `GET /api/v1/platform/tenants/:id`
@@ -61,6 +61,8 @@ Backend internal:
 - `GET /api/v1/platform/features`
 - `GET /api/v1/health/live`
 
+Para los endpoints `/platform/*`, una solicitud sin JWT devuelve `401`; un JWT válido sin el scope o capability requerido devuelve `403`. Las respuestas exitosas devuelven DTOs de plataforma y no exponen payload operativo de tenants. Las mutaciones reciben el DTO correspondiente y responden con la entidad de plataforma creada o actualizada. La corrida de producción verifica actualmente los `GET` autenticados de tenants, planes y features; las mutaciones quedan pendientes de una sesión específica de QA.
+
 Frontend internal:
 
 - `/platform/dashboard`
@@ -69,13 +71,12 @@ Frontend internal:
 
 ## Limitaciones y pendientes
 
-- No existe todavía un servicio Render para `backoffice-be-aurea-internal`.
-- Falta configurar `DATABASE_URL`, `JWT_ACCESS_SECRET`, `GOOGLE_CLIENT_ID` y `FRONTEND_URL` en el servicio internal.
-- La publicación Vercel del frontend internal es accesible, pero hasta configurar `VITE_API_URL` apunta al valor local por defecto.
-- No se verificaron alta/edición real de tenants y planes contra MongoDB remoto.
+- El snapshot no incluía todavía un servicio Render para `backoffice-be-aurea-internal`; ese punto quedó resuelto en la corrida de producción enlazada arriba.
+- La publicación Vercel del frontend internal del snapshot no tenía aún la API productiva configurada; ese punto quedó resuelto en la corrida de producción enlazada arriba.
+- No se verificaron alta/edición real de tenants y planes contra MongoDB remoto en este snapshot; siguen pendientes como prueba de mutación separada.
 - Aún falta retirar los endpoints y pantallas Superadmin del backoffice cliente.
 - Aún falta una corrida autenticada con `platform_owner` y `platform_operator`, incluyendo respuestas `200`, `401`, `403` y casos de mutación.
 
 ## Conclusión
 
-La base de la separación está implementada y publicada en `main`, con validaciones locales exitosas. La entrega completa queda pendiente de configurar el servicio backend internal y sus secretos de entorno; después debe repetirse esta corrida con autenticación y datos remotos antes de cerrar las épicas.
+La base de la separación estaba implementada y publicada en `main` al momento de este snapshot. Los pendientes de despliegue y lectura autenticada fueron resueltos por la corrida de producción enlazada; permanecen como trabajo separado la prueba de mutaciones y el cierre de las épicas con la aprobación del backend cliente.

@@ -76,10 +76,9 @@ Resultado observado: el acceso sin sesión a `/platform/tenants` termina en `/lo
 | --- | --- | --- |
 | El usuario de evidencia es sintético y debe retirarse o rotarse antes de uso operativo | ABIERTO | Usuario `evidence.platform@aurea.local` |
 | El PR del backend cliente tiene todos los checks técnicos verdes, pero requiere aprobación | ABIERTO | [aurea-io/backoffice-be-aurea#97](https://github.com/aurea-io/backoffice-be-aurea/pull/97) |
-| La corrida visual sólo cubre login y guard de ruta | ABIERTO | Completar cuando exista usuario de prueba |
 
-No se crearon issues nuevos en esta corrida: los hallazgos ya están trazados en las épicas/subtareas del Project 2 y en el PR #97.
+La cobertura visual autenticada sí fue ejecutada con el usuario sintético de evidencia: dashboard, tenants, planes y features. Los pendientes restantes son la rotación/eliminación de esa cuenta sintética y la aprobación del backend cliente.
 
 ## Conclusión
 
-El deploy público del backend interno está operativo y la interfaz productiva responde correctamente en Chrome para los flujos no autenticados. La evidencia es **PARCIAL**, no una aprobación integral, hasta ejecutar un flujo autenticado con un usuario de plataforma y resolver la aprobación del backend cliente.
+El deploy público del backend interno está operativo y la interfaz productiva responde correctamente en Chrome para los flujos no autenticados y autenticados de consulta. La evidencia es **PARCIAL**, no una aprobación integral, porque la corrida usa un usuario sintético que debe rotarse/eliminarse y porque el backend cliente aún requiere aprobación para ingresar a `main`.
