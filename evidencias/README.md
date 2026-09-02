@@ -56,13 +56,13 @@ La revisión es de **tolerancia cero**: no existe un margen aceptable de diferen
 Usar este pedido cuando se quiera revisar todo el ecosistema:
 
 ```text
-Ejecutá el playbook de review integral de aurea-docs sobre todo Aurea.
+Ejecutá el playbook de review integral de aurea-docs sobre todo Aurea. El README de la sesión debe incluir un resumen de qué se buscaba y qué se encontró, las capturas embebidas, y la sesión debe agregarse al índice.
 ```
 
 Para acotar el alcance, agregarlo explícitamente al final:
 
 ```text
-Ejecutá el playbook de review integral de aurea-docs sobre backoffice-be-aurea y backoffice-fe-aurea, con foco en autenticación y tenants.
+Ejecutá el playbook de review integral de aurea-docs sobre backoffice-be-aurea y backoffice-fe-aurea, con foco en autenticación y tenants. Subí y embebé las capturas en el README, agregá un resumen de objetivo/hallazgos y actualizá el índice.
 ```
 
 Si el pedido no especifica un alcance, el alcance por defecto es **todo el ecosistema documentado**: `aurea-docs`, `backoffice-be-aurea`, `backoffice-fe-aurea`, `aurea-pages-template` y `aurea-ci`, incluyendo sus integraciones y flujos de punta a punta.
@@ -91,7 +91,7 @@ No se debe interpretar silenciosamente una ambigüedad ni adaptar la documentaci
 
 3. **Auditar el código.** Revisar backend, frontend, template público, CI/CD y configuración asociada. Cubrir rutas, DTOs, guards, servicios, repositorios, queries, filtros `tenantId`, validaciones, serialización, errores, logs, secretos, migraciones, tests, build, lint, tipado, dependencias, rutas de frontend, stores, hooks, componentes, permisos visuales, formularios, estados de carga/vacío/error, accesibilidad y responsive. Comparar cada hallazgo contra la matriz de verdad, no sólo contra la intención aparente del código.
 
-4. **Validar funcionalmente en Chrome.** Levantar el sistema con el procedimiento documentado y recorrer los flujos completos de cada rol, tenant, módulo y estado relevante. Verificar login, sesión, logout, navegación, guards de ruta, permisos, aislamiento entre tenants, CRUD, invitaciones, configuración, catálogo, módulos dinámicos, páginas públicas, errores y casos negativos. Inspeccionar también consola, red, respuestas HTTP, payloads, redirects, almacenamiento, imágenes, enlaces, responsive y consistencia visual con lo documentado. Tomar capturas numeradas de cada flujo o defecto relevante.
+4. **Validar funcionalmente en Chrome.** Levantar el sistema con el procedimiento documentado y recorrer los flujos completos de cada rol, tenant, módulo y estado relevante. Verificar login, sesión, logout, navegación, guards de ruta, permisos, aislamiento entre tenants, CRUD, invitaciones, configuración, catálogo, módulos dinámicos, páginas públicas, errores y casos negativos. Inspeccionar también consola, red, respuestas HTTP, payloads, redirects, almacenamiento, imágenes, enlaces, responsive y consistencia visual con lo documentado. Tomar capturas numeradas de cada flujo o defecto relevante, guardarlas en la carpeta de la sesión y subirlas al repositorio.
 
 5. **Ejecutar las verificaciones automatizadas disponibles.** Correr tests unitarios, integración y E2E, builds, typecheck, lint, validadores de manifests y scripts de CI/CD indicados por la documentación. Un test inexistente no se considera evidencia de cumplimiento.
 
@@ -103,11 +103,11 @@ No se debe interpretar silenciosamente una ambigüedad ni adaptar la documentaci
 
    `CUMPLE` sólo puede utilizarse cuando la coincidencia es exacta y está respaldada por evidencia. `NO VERIFICABLE` tampoco equivale a aprobado: deja la revisión abierta hasta poder comprobarlo.
 
-7. **Crear issues para todos los desvíos.** Crear un issue por defecto por cada desvío accionable, sin agrupar diferencias no relacionadas. El issue debe incluir repositorio afectado, referencia documental, comportamiento esperado, comportamiento observado, pasos para reproducir, impacto, evidencia, commit, severidad y criterio de aceptación. Los casos de seguridad, pérdida de datos, aislamiento multi-tenant o bloqueo de flujo deben marcarse como prioritarios.
+7. **Crear issues para todos los desvíos.** Crear un issue por defecto por cada desvío accionable, sin agrupar diferencias no relacionadas. El issue debe incluir repositorio afectado, referencia documental, comportamiento esperado, comportamiento observado, pasos para reproducir, impacto, evidencia, commit, severidad y criterio de aceptación. Incluir enlaces a las capturas subidas que demuestren el desvío; si el issue no admite una referencia persistente, dejar el enlace relativo en el README y explicar la limitación. Los casos de seguridad, pérdida de datos, aislamiento multi-tenant o bloqueo de flujo deben marcarse como prioritarios.
 
-8. **Generar el reporte de evidencias.** Crear `evidencias/<YY-MM-DD>_<HH-mm>/README.md` siguiendo los reportes existentes. Debe incluir alcance, commits, entorno, matriz de cobertura, comandos ejecutados, usuarios/roles utilizados sin exponer secretos reales, resultados de código y Chrome, tabla completa de desvíos, enlaces a issues, preguntas abiertas, limitaciones, capturas y conclusión. No declarar aprobación si existe al menos un desvío o una verificación crítica pendiente.
+8. **Generar el reporte de evidencias.** Crear `evidencias/<YY-MM-DD>_<HH-mm>/README.md` siguiendo los reportes existentes. El README debe comenzar con un resumen ejecutivo que indique qué se buscaba verificar y qué se encontró. Debe incluir alcance, commits, entorno, matriz de cobertura, comandos ejecutados, usuarios/roles utilizados sin exponer secretos reales, resultados de código y Chrome, tabla completa de desvíos, enlaces a issues, preguntas abiertas, limitaciones, capturas embebidas con Markdown (`![...](./capturas/...)`) y conclusión. Subir el README y todas las capturas al repositorio. Agregar la nueva sesión al índice/historial de este README principal con enlace, estado y componentes revisados. No declarar aprobación si existe al menos un desvío o una verificación crítica pendiente.
 
-9. **Verificar trazabilidad final.** Cada requisito debe terminar en una de estas salidas: evidencia de cumplimiento, issue con evidencia del desvío, o consulta documentada por definición faltante. Revisar que no haya enlaces rotos, rutas antiguas, capturas sin referencia o hallazgos sin issue.
+9. **Verificar trazabilidad final.** Cada requisito debe terminar en una de estas salidas: evidencia de cumplimiento, issue con evidencia del desvío, o consulta documentada por definición faltante. Revisar que no haya enlaces rotos, rutas antiguas, capturas sin referencia, capturas sólo enlazadas pero no embebidas, README sin resumen ejecutivo, sesión ausente del índice o hallazgos sin issue.
 
 ### Criterio de completitud
 
