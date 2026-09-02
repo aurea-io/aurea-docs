@@ -7,8 +7,12 @@
 
 ### Tenants y usuarios
 
-- Un usuario pertenece a un solo tenant.
+- Un usuario puede pertenecer a uno o varios tenants.
 - Un tenant puede tener varios empleados.
+- Cada membership es independiente: el usuario puede tener un rol y permisos
+  diferentes en cada tenant.
+- El usuario opera sobre un único tenant activo por vez; cambiar de tenant
+  debe volver a resolver contexto, capabilities y datos visibles.
 - El cliente puede gestionar sus empleados.
 - El `tenantId` no se acepta del body como fuente de autorización.
 - Un acceso cruzado responde `403` sin revelar si el recurso de otro tenant existe.

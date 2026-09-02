@@ -254,7 +254,10 @@ Se recomienda separar catálogo global de configuración por tenant. Así se evi
 
 ### 5.1.1 `users` y memberships
 
-Cada usuario pertenece a un único tenant. Los roles se mantienen en memberships para permitir varios roles por empleado y auditoría.
+Cada usuario puede pertenecer a varios tenants. Los roles y permisos se
+mantienen en memberships para que el mismo usuario pueda tener una combinación
+distinta por tenant y para conservar la auditoría. La sesión mantiene un único
+tenant activo por vez.
 
 ```js
 // users

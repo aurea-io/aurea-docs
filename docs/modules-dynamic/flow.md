@@ -85,7 +85,10 @@ Sucursales → cantidad de sedes
 
 ## 3. Tenant y empleados
 
-Cada usuario pertenece a un único tenant. Un tenant puede tener varios empleados con varios roles.
+Cada usuario puede pertenecer a varios tenants. Un tenant puede tener varios
+empleados con roles y permisos distintos por membership. La aplicación mantiene
+un único tenant activo por vez y lo cambia mediante el selector de tenant,
+invalidando el contexto anterior antes de cargar el nuevo.
 
 ![Backoffice del cliente con módulos y empleados](../../assets/modules-dynamic/flujo-backoffice-cliente.png)
 
