@@ -107,6 +107,12 @@ La regla se implementa en una política central, no endpoint por endpoint.
 
 ## Decisiones técnicas derivadas
 
+### Tenancy y autorización
+
+La relación entre usuarios y comercios es M:N mediante `TenantUser`. Un usuario puede tener membresías independientes en varios tenants, con rol, permisos y estado propios por comercio. Los roles de tenant conservan un enum base para compatibilidad, pero pueden resolverse mediante `RoleDefinition.roleKey`; las membresías de plataforma se administran por separado.
+
+Los endpoints vigentes usan el prefijo `/api/*` (sin `/v1`). El endpoint público de estilos es `/api/style/:publicId.css?v=:version` y devuelve una versión publicada con ETag.
+
 ### Dependencias
 
 Una feature puede requerir otras. Si un padre queda inactivo, los hijos quedan inactivos. La activación valida dependencias antes de confirmar.
