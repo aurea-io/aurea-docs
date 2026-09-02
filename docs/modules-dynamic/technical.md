@@ -47,7 +47,7 @@ La plataforma necesita dos superficies separadas:
 
 | Superficie | Quién la usa | Responsabilidad |
 | --- | --- | --- |
-| **Backoffice AUREA** | Owner / Readonly | Gestionar planes, membresías, precios, tenants, catálogo de módulos y mantenimiento global |
+| **Backoffice AUREA** | Platform owner / Platform readonly | Gestionar planes, membresías, precios, tenants, catálogo de módulos y mantenimiento global |
 | **Backoffice del cliente** | Usuarios de una empresa | Gestionar el negocio de un tenant: reservas, clientes, productos, pedidos y configuración habilitada |
 
 El backoffice AUREA no es una versión más amplia del backoffice de cliente. Tiene un contexto de plataforma y puede operar sobre muchos tenants; el backoffice de cliente siempre está limitado a uno. La separación debe existir en rutas, layouts, permisos y auditoría:
@@ -60,8 +60,8 @@ El backoffice AUREA no es una versión más amplia del backoffice de cliente. Ti
 
 Los únicos roles iniciales del backoffice AUREA son:
 
-- `owner`: lectura y escritura de planes, tenants, módulos, mantenimientos y membresías;
-- `readonly`: lectura y reportes, sin mutaciones.
+- `platform_owner`: lectura y escritura de planes, tenants, módulos, mantenimientos y membresías;
+- `platform_readonly`: lectura y reportes, sin mutaciones.
 
 Los roles del cliente (`tenant_admin`, `operator`, etc.) no deben reutilizarse para conceder acceso al backoffice AUREA. La autorización debe comprobar tanto `scope` (`platform` o `tenant`) como el permiso.
 
@@ -115,7 +115,7 @@ flowchart TB
   UI --> WEB
 ```
 
-### 4.1 Mapa de carpetas
+### 4.1 Mapa de carpetas de referencia
 
 ```text
 packages/
@@ -190,13 +190,16 @@ comercios pertenece a `platform`; toda operación de negocio debe vivir bajo
 
 Reglas obligatorias:
 
-1. Los endpoints de `platform` aceptan roles `platform_owner` o
-   `platform_readonly` y no requieren `x-tenant-id`.
+1. Los endpoints de lectura en `platform` aceptan `platform_owner` o
+   `platform_readonly` y no requieren `x-tenant-id`. Los endpoints de mutación
+   requieren `platform_owner` o el permiso explícito de escritura
+   correspondiente; `platform_readonly` nunca puede mutar.
 2. Los endpoints de `tenant` requieren `x-tenant-id`; el backend debe validar
    que el usuario tenga una membresía válida antes de ejecutar el caso de uso.
 3. Cada módulo de negocio se ubica en
    `tenant/sections/<section>/<page>/` y declara `section`, `page`, `scope` y
-   sus features en `<module>.manifest.ts`.
+   sus features en `<module>.manifest.ts` en backend. En frontend, el contrato
+   equivalente se publica como `features.ts` dentro de la misma página.
 4. La feature key es estable y compartida por catálogo, guard del backend y
    `useCapability` en el frontend. El manifiesto conserva además los campos
    `section` y `page` para representar la jerarquía formal; por compatibilidad,
@@ -268,6 +271,7 @@ export const bookingsManifest = {
   module: 'bookings',
   section: 'services',
   page: 'bookings',
+  scope: 'tenant',
   features: [
     { key: 'create', default: true, requiredPermissions: ['bookings:create'] },
     { key: 'photo_upload', default: false, requiredPermissions: ['bookings:write'] },
