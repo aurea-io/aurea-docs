@@ -115,6 +115,8 @@ La revisión sólo está completa y puede declararse aprobada cuando se cubriero
 
 ### Capturas obligatorias
 
-El playbook debe tomar y **subir capturas numeradas** de cada flujo validado y de cada desvío relevante. Las imágenes deben guardarse en `evidencias/<YY-MM-DD>_<HH-mm>/capturas/`, enlazarse desde el README de la sesión y adjuntarse o enlazarse desde los issues correspondientes. No alcanza con describir una pantalla sin una captura verificable.
+El playbook debe tomar y **subir capturas numeradas** de cada flujo validado y de cada desvío relevante. Las imágenes deben guardarse en `evidencias/<YY-MM-DD>_<HH-mm>/capturas/`, enlazarse y **embeberse dentro del README de la sesión** con Markdown (`![...](./capturas/...)`), y adjuntarse o enlazarse desde los issues correspondientes. No alcanza con describir una pantalla ni con dejar únicamente un enlace a la captura.
+
+El README de cada sesión debe comenzar con un **resumen ejecutivo** que explique claramente qué se buscaba verificar y qué se encontró, incluyendo los principales cumplimientos, desvíos y bloqueos. También debe agregar la sesión al índice/historial de este README principal, con enlace al reporte, alcance, estado y componentes revisados.
 
 ---
