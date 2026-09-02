@@ -9,4 +9,6 @@ permissions:
 jobs:
   release:
     uses: aurea-io/aurea-ci/.github/workflows/release.yml@main
+    with:
+      deploy-workflow: ''
     secrets: inherit
