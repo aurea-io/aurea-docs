@@ -4,7 +4,7 @@
 
 Esta corrida es un snapshot histórico del avance de la separación entre el Backoffice interno de AUREA y el backoffice operativo de los tenants. Su fuente de verdad actualizada es la corrida de producción [`26-09-02_19-27_internal-platform-production`](../26-09-02_19-27_internal-platform-production/README.md), que incorpora Render, MongoDB remoto y la validación autenticada en Chrome.
 
-La separación todavía no puede declararse completa: el backend internal aún no está desplegado con una conexión MongoDB de producción y, por ese motivo, no se pudo ejecutar el flujo autenticado end-to-end ni validar mutaciones contra datos reales.
+En este snapshot la separación todavía no podía declararse completa: el backend internal aún no estaba desplegado con una conexión MongoDB de producción. Esa limitación quedó resuelta para las lecturas autenticadas en la corrida de producción enlazada; las mutaciones siguen siendo un pendiente específico.
 
 ## Alcance
 
