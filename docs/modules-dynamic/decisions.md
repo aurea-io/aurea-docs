@@ -43,6 +43,14 @@ Módulo Reservas
 
 Una función no pertenece a una sola pantalla. `services.bookings.photo_upload` puede aparecer en la página pública y en el backoffice del cliente. Las páginas pueden tener una versión completa o reducida según las capabilities efectivas, y el cliente final no debe ver controles inactivos.
 
+### Correspondencia unívoca entre Feature Keys y Paquetes de Código (Front y Back)
+
+- El namespace de la capability o feature requerida (excluyendo únicamente el calificador de acción final como `.read`, `.write`, `.create`, etc.) define de manera obligatoria la estructura modular, paquete y nombre de archivo donde reside la lógica.
+- Por ejemplo, la lógica y endpoints protegidos por `platform.tenants.read` o `platform.tenants.write` (como `createTenant` o `listTenants`) deben vivir en el paquete de dominio `platform/tenants/` (o archivo `platform.tenants.ts`), y no en un archivo genérico `platform.controller.ts` / `PlatformService` que mezcle tenants, planes y features.
+- Queda estrictamente prohibido el uso de controladores o módulos comodín ("god controllers") que agrupen subdominios disjuntos con diferentes namespaces de capabilities.
+- Toda revisión de código o auditoría de evidencias debe marcar como desvío cualquier controlador, servicio o módulo que concentre más de un dominio de capabilities. Esta regla aplica con idéntico rigor a Backend y Frontend.
+
+
 ### Planes, créditos y addons
 
 - Un tenant puede tener un plan y addons.

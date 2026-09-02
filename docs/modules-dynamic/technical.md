@@ -207,6 +207,20 @@ Reglas obligatorias:
    `catalog.items.manage`.
 5. `core` puede ser importado por ambos scopes; `platform` no puede importar
    módulos operativos de `tenant` para evitar acoplamiento accidental.
+6. **Correspondencia unívoca entre Feature Key y Package/Módulo (Front y Back):**
+   El namespace de la capability o feature requerida en guards o decoradores
+   (ej. `@RequireFeatures('platform.tenants.read')` o `useCapability`) define
+   estrictamente el paquete, carpeta y archivo donde debe residir su lógica,
+   descontando únicamente el calificador de acción final (`.read`, `.write`,
+   `.create`, etc.). Por ejemplo, la lógica y endpoints de `createTenant` o
+   `listTenants` (`platform.tenants.*`) deben residir en el paquete de dominio
+   dedicado `platform/tenants/` (o archivo `platform.tenants.ts`), y nunca
+   agruparse en un controlador paraguas genérico `platform.controller.ts` ni en
+   un servicio monolítico `PlatformService`. Queda prohibido el uso de
+   controladores o módulos comodín que agrupen subdominios disjuntos con
+   diferentes namespaces de capabilities. Esta regla aplica con idéntico rigor
+   a Backend y Frontend.
+
 
 ### 4.2 Qué vive en cada lugar
 
