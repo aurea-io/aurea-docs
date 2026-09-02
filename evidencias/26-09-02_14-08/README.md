@@ -6,6 +6,22 @@ Se revisó el ecosistema disponible en `/home/fedemarkoo/Escritorio/Aurea` sigui
 
 La revisión no puede declararse aprobada: hay desvíos de build/tests y verificaciones funcionales bloqueadas por falta de credenciales/servicios.
 
+## Resumen ejecutivo
+
+### Qué se buscaba
+
+Se buscaba verificar de punta a punta que la implementación coincidiera con el contrato de `aurea-docs`: autenticación, autorización RBAC/FBAC, scopes `platform` y `tenant`, aislamiento multi-tenant, módulos y capabilities, flujos de backoffice, CI/CD, MCP y comportamiento visible en Chrome. También se buscaba dejar trazabilidad reproducible mediante comandos, capturas subidas e issues por cada desvío.
+
+### Qué se encontró
+
+- El backend público pasó Prisma generate, sus 13 suites (43 tests) y el build; lint pasó con warnings.
+- El backend interno conserva 2 errores de TypeScript y 7 tests fallidos, por incompatibilidad del repositorio de usuarios, configuración JWT ausente y datos de prueba inconsistentes.
+- El frontend público compiló y sus rutas públicas renderizaron correctamente en Chrome.
+- El frontend interno pasó lint, pero su build falla porque no resuelve `workbox-window`.
+- `aurea-ci` pasó sus validaciones locales; hay workflows consumidores faltantes en el frontend público y ambos repos internos.
+- `aurea-mongo-mcp` tiene escrituras protegidas, pero no pudo probarse contra una base real.
+- `aurea-pages-template` no está disponible en el workspace y los flujos autenticados no pudieron recorrerse sin servicios/credenciales.
+
 ## Estado de repositorios al iniciar
 
 Todos los repositorios disponibles fueron llevados a `main` con checkout forzado y limpieza de cambios versionados/no versionados. Antes de ejecutar las verificaciones, el estado fue limpio:
@@ -69,13 +85,23 @@ Las capturas fueron guardadas en [`capturas/`](./capturas/) y se subieron como p
 3. [Recuperación de contraseña](./capturas/03_recuperacion_password.png)
 4. [Login del backoffice interno](./capturas/04_login_interno.png)
 
-Estas capturas respaldan la validación de las rutas públicas; los issues de backend y del build interno contienen el detalle técnico de sus desvíos.
+### Vista previa
+
+![Login público](./capturas/01_login_publico.png)
+
+![Registro por invitación](./capturas/02_registro_invitacion.png)
+
+![Recuperación de contraseña](./capturas/03_recuperacion_password.png)
+
+![Login del backoffice interno](./capturas/04_login_interno.png)
+
+Estas capturas respaldan la validación de las rutas públicas; los issues de backend y del build interno contienen el detalle técnico de sus desvíos. Las imágenes están embebidas arriba para que el README sea autosuficiente.
 
 ## Desvíos e issues
 
 | Repo | Desvío | Issue | Severidad |
 | --- | --- | --- | --- |
-| `backoffice-be-aurea-internal` | Prisma Client/modelos internos ausentes; tests y build fallan. | [#9](https://github.com/aurea-io/backoffice-be-aurea-internal/issues/9) | Alta |
+| `backoffice-be-aurea-internal` | Incompatibilidad de firma en `findById`, tests E2E sin `JWT_ACCESS_SECRET` y fixture de usuario inconsistente. | [#9](https://github.com/aurea-io/backoffice-be-aurea-internal/issues/9) | Alta |
 | `backoffice-fe-aurea-internal` | Build PWA no resuelve `workbox-window`. | [#9](https://github.com/aurea-io/backoffice-fe-aurea-internal/issues/9) | Alta |
 | `backoffice-fe-aurea` | Faltan workflows consumidores `security.yml` y `commit-policy.yml`. | [#55](https://github.com/aurea-io/backoffice-fe-aurea/issues/55) | Alta |
 | `backoffice-be-aurea-internal` | No existen workflows consumidores. | [#10](https://github.com/aurea-io/backoffice-be-aurea-internal/issues/10) | Alta |
