@@ -51,17 +51,19 @@ Resultado: ✅ El acceso no autenticado a `/platform/tenants` vuelve a la pantal
 
 Backend internal (contratos vigentes; autenticación JWT de plataforma):
 
-- `GET /api/v1/platform/tenants`
-- `GET /api/v1/platform/tenants/:id`
-- `POST /api/v1/platform/tenants`
-- `PATCH /api/v1/platform/tenants/:id`
-- `GET /api/v1/platform/plans`
-- `POST /api/v1/platform/plans`
-- `PATCH /api/v1/platform/plans/:id`
-- `GET /api/v1/platform/features`
-- `GET /api/v1/health/live`
+| Endpoint | Auth / capability | Request | Response | Errores y límite de datos |
+| --- | --- | --- | --- | --- |
+| `GET /api/v1/platform/tenants` | JWT `scope=platform`; `platform.tenants.read` | Sin body | Lista `PlatformTenant` | `401` sin JWT; `403` sin capability; sólo datos globales de tenants |
+| `GET /api/v1/platform/tenants/:id` | JWT `scope=platform`; `platform.tenants.read` | `id` de ruta | `PlatformTenant` | `401`/`403`; no devuelve reservas, empleados ni datos operativos |
+| `POST /api/v1/platform/tenants` | JWT `scope=platform`; `platform.tenants.write` | DTO de alta: `name`, `slug`, `vertical` | `PlatformTenant` creado | `401`/`403`; crea entidad global, sin payload tenant-operativo |
+| `PATCH /api/v1/platform/tenants/:id` | JWT `scope=platform`; `platform.tenants.write` | DTO parcial de tenant | `PlatformTenant` actualizado | `401`/`403`; muta sólo configuración global |
+| `GET /api/v1/platform/plans` | JWT `scope=platform`; `platform.catalog.read` | Sin body | Lista `PlatformPlan` | `401`/`403`; catálogo global, no suscripción operativa del tenant |
+| `POST /api/v1/platform/plans` | JWT `scope=platform`; `platform.catalog.write` | DTO de plan y features | `PlatformPlan` creado | `401`/`403`; catálogo global |
+| `PATCH /api/v1/platform/plans/:id` | JWT `scope=platform`; `platform.catalog.write` | DTO parcial de plan | `PlatformPlan` actualizado | `401`/`403`; catálogo global |
+| `GET /api/v1/platform/features` | JWT `scope=platform`; `platform.catalog.read` | Sin body | Lista `PlatformFeature` | `401`/`403`; catálogo global |
+| `GET /api/v1/health/live` | Público, liveness | Sin body | `{ status, scope, check, commit }` | No expone datos de tenants |
 
-Para los endpoints `/platform/*`, una solicitud sin JWT devuelve `401`; un JWT válido sin el scope o capability requerido devuelve `403`. Las respuestas exitosas devuelven DTOs de plataforma y no exponen payload operativo de tenants. Las mutaciones reciben el DTO correspondiente y responden con la entidad de plataforma creada o actualizada. La corrida de producción verifica actualmente los `GET` autenticados de tenants, planes y features; las mutaciones quedan pendientes de una sesión específica de QA.
+La corrida de producción verifica los `GET` autenticados de tenants, planes y features; las mutaciones quedan pendientes de una sesión específica de QA.
 
 Frontend internal:
 
@@ -75,7 +77,7 @@ Frontend internal:
 - La publicación Vercel del frontend internal del snapshot no tenía aún la API productiva configurada; ese punto quedó resuelto en la corrida de producción enlazada arriba.
 - No se verificaron alta/edición real de tenants y planes contra MongoDB remoto en este snapshot; siguen pendientes como prueba de mutación separada.
 - Aún falta retirar los endpoints y pantallas Superadmin del backoffice cliente.
-- Aún falta una corrida autenticada con `platform_owner` y `platform_operator`, incluyendo respuestas `200`, `401`, `403` y casos de mutación.
+- La corrida autenticada con `platform_owner` ya está documentada en producción; queda una sesión específica para `platform_operator`, `401`, `403` y mutaciones. Seguimiento: [#41 — contrato de autenticación](https://github.com/aurea-io/aurea-docs/issues/41) y [#42 — rutas y migración](https://github.com/aurea-io/aurea-docs/issues/42), ambos OPEN en Project 2.
 
 ## Conclusión
 

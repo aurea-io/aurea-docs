@@ -75,10 +75,12 @@ Resultado observado: el acceso sin sesión a `/platform/tenants` termina en `/lo
 | Hallazgo | Estado | Referencia |
 | --- | --- | --- |
 | El usuario de evidencia es sintético y debe retirarse o rotarse antes de uso operativo | ABIERTO | Usuario `evidence.platform@aurea.local` |
-| El PR del backend cliente tiene todos los checks técnicos verdes, pero requiere aprobación | ABIERTO | [aurea-io/backoffice-be-aurea#97](https://github.com/aurea-io/backoffice-be-aurea/pull/97) |
+| El backend cliente ya fue integrado en `main`; queda validar el estado posterior al merge | CERRADO | [aurea-io/backoffice-be-aurea#97](https://github.com/aurea-io/backoffice-be-aurea/pull/97) |
 
-La cobertura visual autenticada sí fue ejecutada con el usuario sintético de evidencia: dashboard, tenants, planes y features. Los pendientes restantes son la rotación/eliminación de esa cuenta sintética y la aprobación del backend cliente.
+La cobertura visual autenticada sí fue ejecutada con el usuario sintético de evidencia: dashboard, tenants, planes y features. El pendiente restante es retirar o rotar esa cuenta sintética.
+
+Issues y estado de seguimiento: [#45 — rotar usuario sintético](https://github.com/aurea-io/aurea-docs/issues/45) (OPEN, Project 2: pendiente); [#97 — retirar Superadmin del backend cliente](https://github.com/aurea-io/backoffice-be-aurea/pull/97) (MERGED); [#40 — ownership por repositorio y scope](https://github.com/aurea-io/aurea-docs/issues/40) (OPEN, Project 2: pendiente); [#41 — contrato de autenticación](https://github.com/aurea-io/aurea-docs/issues/41) (OPEN, Project 2: pendiente); [#42 — rutas y migración](https://github.com/aurea-io/aurea-docs/issues/42) (OPEN, Project 2: pendiente).
 
 ## Conclusión
 
-El deploy público del backend interno está operativo y la interfaz productiva responde correctamente en Chrome para los flujos no autenticados y autenticados de consulta. La evidencia es **PARCIAL**, no una aprobación integral, porque la corrida usa un usuario sintético que debe rotarse/eliminarse y porque el backend cliente aún requiere aprobación para ingresar a `main`.
+El deploy público del backend interno está operativo y la interfaz productiva responde correctamente en Chrome para los flujos no autenticados y autenticados de consulta. La evidencia es **PARCIAL**, no una aprobación integral, porque la corrida usa un usuario sintético que debe rotarse/eliminarse; el backend cliente ya fue integrado en `main` mediante el PR #97.
