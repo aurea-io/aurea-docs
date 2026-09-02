@@ -209,17 +209,29 @@ Reglas obligatorias:
    módulos operativos de `tenant` para evitar acoplamiento accidental.
 6. **Correspondencia unívoca entre Feature Key y Package/Módulo (Front y Back):**
    El namespace de la capability o feature requerida en guards o decoradores
-   (ej. `@RequireFeatures('platform.tenants.read')` o `useCapability`) define
-   estrictamente el paquete, carpeta y archivo donde debe residir su lógica,
-   descontando únicamente el calificador de acción final (`.read`, `.write`,
-   `.create`, etc.). Por ejemplo, la lógica y endpoints de `createTenant` o
-   `listTenants` (`platform.tenants.*`) deben residir en el paquete de dominio
-   dedicado `platform/tenants/` (o archivo `platform.tenants.ts`), y nunca
-   agruparse en un controlador paraguas genérico `platform.controller.ts` ni en
-   un servicio monolítico `PlatformService`. Queda prohibido el uso de
-   controladores o módulos comodín que agrupen subdominios disjuntos con
-   diferentes namespaces de capabilities. Esta regla aplica con idéntico rigor
-   a Backend y Frontend.
+   define estrictamente el paquete, carpeta y archivo donde debe residir su
+   lógica, descontando únicamente el calificador de acción final (`.read`,
+   `.write`, `.create`, etc.). Por ejemplo, la lógica y endpoints de
+   `createTenant` o `listTenants` (`platform.tenants.*`) deben residir en el
+   paquete de dominio dedicado `platform/tenants/` (o archivo
+   `platform.tenants.ts`), y nunca agruparse en un controlador paraguas genérico
+   `platform.controller.ts` ni en un servicio monolítico `PlatformService`.
+   Queda prohibido el uso de controladores o módulos comodín que agrupen
+   subdominios disjuntos con diferentes namespaces de capabilities. Esta regla
+   aplica con idéntico rigor a Backend y Frontend.
+
+   #### Patrón estándar de decoradores (Backend y Frontend):
+   Para evitar la repetición manual y propensa a typos de strings completos en
+   cada método, se utiliza la composición de dominio y acción:
+   * **Nivel de clase/controlador:** `@FeatureDomain('platform.tenants')` fija el
+     namespace del paquete.
+   * **Nivel de método:** `@RequireRead()` resuelve `${domain}.read`, y
+     `@RequireWrite()` resuelve `${domain}.write` (admitiendo subacciones
+     opcionales como `@RequireWrite('photo')`).
+   * **Frontend:** Se utiliza el hook contextual simétrico
+     `useDomainPermissions('platform.tenants')` que expone `{ canRead, canWrite }`,
+     vinculando los componentes visuales directamente a su dominio sin
+     hardcodear strings sueltos.
 
 
 ### 4.2 Qué vive en cada lugar
