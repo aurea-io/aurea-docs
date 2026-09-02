@@ -41,3 +41,15 @@ evidencias/<YY-MM-DD>_<HH-mm>/
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
 | [`26-09-02_01-25`](./26-09-02_01-25/README.md) | `v0.18.0` | `v0.1.2` | N/A | `v0.4.0` | 🟡 AUDITORÍA | Auditoría de arquitectura profunda: taxonomía `services.bookings`, scopes `platform` vs `tenant` y tareas de refactor. |
 | [`26-09-02_01-03`](./26-09-02_01-03/README.md) | `v0.18.0` | `v0.1.2` | N/A | `v0.4.0` | 🟢 APROBADO | Pruebas E2E en Chrome, RBAC/FBAC, Theme Service y Gestión de Tenants. |
+
+## 🤖 Playbook de Review Integral Asistida por IA — Tolerancia Cero
+
+### Pedido recomendado
+
+```text
+Ejecutá el playbook de review integral de aurea-docs sobre todo Aurea. Tomá y subí capturas numeradas de cada flujo validado y de cada desvío relevante; enlazalas en el reporte de evidencias y en los issues correspondientes.
+```
+
+La revisión debe contrastar documentación, código y comportamiento funcional en Chrome. Toda diferencia confirmada requiere un issue y registro en el reporte. Las capturas son obligatorias: deben guardarse en `evidencias/<YY-MM-DD>_<HH-mm>/capturas/`, con nombres descriptivos, y subirse al repositorio como parte de la sesión. Cada captura debe estar enlazada desde la sección o fila que respalda; los issues deben incluir o enlazar las capturas pertinentes.
+
+Si falta entorno, credencial o una definición documental, clasificar el resultado como `NO VERIFICABLE` o `NO DEFINIDO`; nunca como cumplimiento. Generar el README de la sesión con alcance, commits, entorno, matriz, comandos, resultados de código/Chrome, capturas, issues, limitaciones y conclusión. No declarar aprobación si existe un desvío o una verificación crítica pendiente.
