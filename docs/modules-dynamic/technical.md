@@ -160,6 +160,51 @@ apps/
                         └── components/
 ```
 
+#### Aplicación actual de Aurea
+
+En los repositorios de backoffice, esta convención se aplica sobre la estructura
+existente sin cambiar las rutas HTTP ni las URLs del frontend:
+
+```text
+backoffice-be-aurea/src/
+├── core/                                  # guards, decorators y contratos transversales
+├── platform/superadmin/                   # operaciones globales de Aurea
+└── tenant/
+    ├── core/                              # contexto, invitaciones y configuración base
+    └── sections/commerce/catalog/          # módulo commerce.catalog y su manifiesto
+
+backoffice-fe-aurea/src/
+├── core existente                          # API, stores, hooks y UI compartida
+├── platform/
+│   ├── superadmin/                         # tenants, features y detalle de tenant
+│   └── preview/                            # preview administrado de un tenant
+└── tenant/
+    ├── pages/                              # dashboard, miembros, invitaciones y ajustes
+    └── sections/commerce/catalog/           # página y componentes de commerce.catalog
+```
+
+Las carpetas `platform` y `tenant` son límites de autorización, no solo
+agrupadores visuales. Un controlador o una página que opere sobre varios
+comercios pertenece a `platform`; toda operación de negocio debe vivir bajo
+`tenant` y resolver el tenant activo.
+
+Reglas obligatorias:
+
+1. Los endpoints de `platform` aceptan roles `platform_owner` o
+   `platform_readonly` y no requieren `x-tenant-id`.
+2. Los endpoints de `tenant` requieren `x-tenant-id`; el backend debe validar
+   que el usuario tenga una membresía válida antes de ejecutar el caso de uso.
+3. Cada módulo de negocio se ubica en
+   `tenant/sections/<section>/<page>/` y declara `section`, `page`, `scope` y
+   sus features en `<module>.manifest.ts`.
+4. La feature key es estable y compartida por catálogo, guard del backend y
+   `useCapability` en el frontend. El manifiesto conserva además los campos
+   `section` y `page` para representar la jerarquía formal; por compatibilidad,
+   los módulos existentes pueden usar una key corta como
+   `catalog.items.manage`.
+5. `core` puede ser importado por ambos scopes; `platform` no puede importar
+   módulos operativos de `tenant` para evitar acoplamiento accidental.
+
 ### 4.2 Qué vive en cada lugar
 
 | Carpeta | Responsabilidad | Puede decidir activación comercial | Debe conocer MongoDB |
