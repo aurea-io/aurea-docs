@@ -6,4 +6,6 @@
 
 ## UX y faltantes
 
-Riesgos: uso de `window.prompt`/`alert` para categorías, modificadores e importación. Los precios renderizados requieren revisar conversión de centavos a ARS.
+Riesgos observados en producción: los precios renderizados requieren revisar conversión de centavos a ARS. El código del PR #83 reemplaza los dialogs nativos del Catálogo por dialogs accesibles y feedback inline, pero todavía requiere promoción y retest autenticado.
+
+Evidencia repetida: [`catalog-production-retest.jpg`](../capturas/catalog-production-retest.jpg).

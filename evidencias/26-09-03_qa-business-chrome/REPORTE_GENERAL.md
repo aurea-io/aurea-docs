@@ -19,6 +19,21 @@ La ejecución en Chrome se completó parcialmente con `QA Owner`. Luego se imple
 
 Se encontraron 25 superficies de pantalla entre autenticación, tenant, plataforma y preview. Cada una tiene un reporte individual en [`reportes/`](./reportes/).
 
+## Recorrido Chrome repetido
+
+| Superficie | Resultado de la nueva corrida |
+|---|---|
+| Dashboard | Producción carga con `QA Owner` y `De Santas Studio`; aún exhibe la URL `localhost` |
+| Catálogo | Se accede desde el menú y carga 4 ítems, búsqueda, filtros y acciones |
+| Agenda | Se accede desde el menú y carga el estado vacío “No hay reservas para mostrar” |
+| Configuración | Carga con el formulario del negocio |
+| Facturación | Carga con el plan y módulos incluidos |
+| Equipo | Redirige a `/dashboard` |
+| Invitaciones | Redirige a `/dashboard` |
+| Preview nuevo | `/dashboard` llega al login SPA sin 404; credenciales QA no aceptadas |
+
+Capturas nuevas: [`capturas/`](./capturas/) con sufijo `-production-retest` y `preview-dashboard-retest-login.jpg`.
+
 ## Hallazgos de implementación
 
 Los hallazgos siguientes corresponden a la ejecución autenticada en producción. El retest del Preview confirmó el arreglo de deep-link, pero no pudo autenticarse con las credenciales QA disponibles.
