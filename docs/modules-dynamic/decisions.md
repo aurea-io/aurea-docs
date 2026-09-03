@@ -51,6 +51,13 @@ Una función no pertenece a una sola pantalla. `services.bookings.photo_upload` 
 - Toda revisión de código o auditoría de evidencias debe marcar como desvío cualquier controlador, servicio o módulo que concentre más de un dominio de capabilities. Esta regla aplica con idéntico rigor a Backend y Frontend.
 - A nivel de implementación, los controladores declaran `@FeatureDomain('<scope>.<dominio>')` a nivel de clase y métodos anotados con `@RequireRead()` / `@RequireWrite()`; en el frontend se adopta el hook contextual simétrico `useDomainPermissions('<scope>.<dominio>')`.
 
+### Bounded Context en Carpetas: 1 Carpeta = 1 Negocio / Subdominio
+
+- Una carpeta física en el proyecto (`src/tenant/sections/<sección>/<negocio>/`) nunca debe agrupar más de un negocio o subdominio funcional.
+- Se prohíbe el uso de carpetas paraguas como `restaurant/` que amontonen subdominios disjuntos (`tables`, `orders`, `kitchen`). Cada uno de estos subdominios tiene su propio ciclo de vida, DTOs, controllers, servicios y manifiestos de capabilities independientes.
+- Se establece una distinción tajante entre `services.bookings` (turnos y citas de servicios para profesionales/estética) y las reservas de salón gastronómico (`tables`), impidiendo colisiones de capabilities entre diferentes rubros de tenants.
+
+
 
 
 ### Planes, créditos y addons
