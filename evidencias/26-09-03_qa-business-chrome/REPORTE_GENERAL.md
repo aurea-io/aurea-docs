@@ -13,7 +13,7 @@ La ejecución en Chrome se completó parcialmente con `QA Owner`. Luego se imple
 | #79 | Misma corrección de capabilities para Invitaciones | Implementado; runtime pendiente de promoción |
 | #80 | URLs públicas resueltas con `/public/:slug` | Implementado; producción aún muestra URL localhost |
 | #81 | Formatter centralizado desde centavos y moneda ARS explícita | Implementado; runtime pendiente de promoción |
-| #82 | Catálogo sin dialogs nativos; usa Dialog y feedback inline | Implementado; runtime pendiente de promoción |
+| #82 | Catálogo sin dialogs nativos; usa Dialog, validación inline, estados de carga y detalle CSV por fila | Implementado; runtime pendiente de promoción |
 
 ## Inventario
 

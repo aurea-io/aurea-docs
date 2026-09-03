@@ -8,4 +8,4 @@
 
 La ruta pública carga el branding “Aurea Digital Space” y el estado vacío de catálogo sin 404. Quedan pendientes branding completo, enlaces de reserva, datos de catálogo, responsive y separación de acciones públicas versus privadas.
 
-Evidencia: [`preview-dashboard-retest-login.jpg`](../capturas/preview-dashboard-retest-login.jpg) y [`preview-public-retest.jpg`](../capturas/preview-public-retest.jpg).
+Evidencia: [`preview-dashboard-retest-login.jpg`](../capturas/preview-dashboard-retest-login.jpg), [`preview-public-retest.jpg`](../capturas/preview-public-retest.jpg) y [`preview-public-final.jpg`](../capturas/preview-public-final.jpg).
