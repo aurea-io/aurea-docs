@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "description": "Estructura canónica de Secciones, Páginas y Módulos de Aurea. De aquí se derivan automáticamente las labels funcionales area:<section>.<page>.",
+  "version": "1.1.0",
+  "description": "Estructura canónica de Secciones, Páginas y Módulos de Aurea. Define la jerarquía de 3 niveles, las labels funcionales area:<section>.<page> y las rutas navegables canónicas /<section>/<page>.",
   "sections": {
     "services": {
       "name": "Servicios",
@@ -8,6 +8,7 @@
       "pages": {
         "bookings": {
           "name": "Agenda de Turnos y Citas",
+          "path": "/services/bookings",
           "modules": [
             "create",
             "reschedule",
@@ -24,6 +25,7 @@
       "pages": {
         "catalog": {
           "name": "Catálogo de Productos y Servicios",
+          "path": "/commerce/catalog",
           "modules": [
             "items",
             "add_to_cart",
@@ -34,6 +36,7 @@
         },
         "orders": {
           "name": "Ventas y Pedidos de Todos los Canales",
+          "path": "/commerce/orders",
           "modules": [
             "takeaway",
             "delivery",
@@ -44,6 +47,7 @@
         },
         "inventory": {
           "name": "Control de Stock y Almacén",
+          "path": "/commerce/inventory",
           "modules": [
             "minimum_alerts",
             "manual_adjust",
@@ -52,6 +56,7 @@
         },
         "pos": {
           "name": "Punto de Venta y Caja",
+          "path": "/commerce/pos",
           "modules": [
             "shifts",
             "blind_closing",
@@ -66,6 +71,7 @@
       "pages": {
         "tables": {
           "name": "Salón y Mesas",
+          "path": "/gastronomy/tables",
           "modules": [
             "status",
             "qr_generator",
@@ -74,6 +80,7 @@
         },
         "kitchen": {
           "name": "Pantalla de Cocina / KDS",
+          "path": "/gastronomy/kitchen",
           "modules": [
             "timer",
             "stage_progression"
@@ -81,6 +88,7 @@
         },
         "public": {
           "name": "Superficie Pública de Salón",
+          "path": "/gastronomy/public",
           "modules": [
             "qr_view",
             "table_request"
@@ -94,6 +102,7 @@
       "pages": {
         "clients": {
           "name": "Directorio y Fichas de Clientes",
+          "path": "/crm/clients",
           "modules": [
             "profile",
             "history",
@@ -108,6 +117,7 @@
       "pages": {
         "coupons": {
           "name": "Cupones de Descuento",
+          "path": "/marketing/coupons",
           "modules": [
             "usage_limit",
             "min_purchase"
@@ -115,6 +125,7 @@
         },
         "loyalty": {
           "name": "Programa de Fidelidad y Puntos",
+          "path": "/marketing/loyalty",
           "modules": [
             "earn_rules",
             "rewards"
@@ -128,6 +139,7 @@
       "pages": {
         "dashboard": {
           "name": "Dashboard Principal",
+          "path": "/core/dashboard",
           "modules": [
             "kpis",
             "recent_activity",
@@ -136,6 +148,7 @@
         },
         "members": {
           "name": "Equipo y Colaboradores",
+          "path": "/core/members",
           "modules": [
             "invitations",
             "role_assignment"
@@ -143,6 +156,7 @@
         },
         "theme": {
           "name": "Configuración de Marca y Branding",
+          "path": "/core/theme",
           "modules": [
             "branding",
             "css_customization"
@@ -150,6 +164,7 @@
         },
         "billing": {
           "name": "Plan y Facturación",
+          "path": "/core/billing",
           "modules": [
             "plan_details",
             "credits_usage",
