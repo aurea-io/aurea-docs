@@ -233,6 +233,29 @@ Reglas obligatorias:
      vinculando los componentes visuales directamente a su dominio sin
      hardcodear strings sueltos.
 
+7. **Principio de Bounded Context en Carpetas (1 Carpeta = 1 Negocio / Subdominio):**
+   Una carpeta física en el proyecto nunca debe agrupar más de un negocio o subdominio funcional. Queda estrictamente prohibido el uso de carpetas comodín (por ejemplo, una carpeta `restaurant/` que contenga mesas, comandas y cocina al mismo tiempo).
+   
+   Cada negocio debe disponer de su propia carpeta modular aislada conteniendo exclusivamente sus controladores, servicios, DTOs y manifiestos:
+   * `tenant/sections/<sección>/<negocio>/` en backend y frontend.
+   
+   #### Mapeo Canónico de Secciones y Negocios:
+   | Sección | Negocio / Subdominio | Carpeta Backend (`src/tenant/sections/`) | Carpeta Frontend (`src/tenant/sections/`) | Feature Key / Domain | Responsabilidad |
+   |---|---|---|---|---|---|
+   | `gastronomy` | Salón y Mesas | `gastronomy/tables/` | `gastronomy/tables/` | `tables` (`gastronomy.tables`) | Estado de mesas, layout de salón, QR y reservas de mesa |
+   | `gastronomy` | Comandas y Facturación | `gastronomy/orders/` | `gastronomy/orders/` | `orders` (`gastronomy.orders`) | Pedidos, tickets de mesa, cupones y emisión fiscal |
+   | `gastronomy` | Cocina / KDS | `gastronomy/kitchen/` | `gastronomy/kitchen/` | `kitchen` (`gastronomy.kitchen`) | Pantalla de cocina, estados de preparación y despacho |
+   | `services` | Turnos y Citas de Servicios | `services/bookings/` | `services/bookings/` | `bookings` (`services.bookings`) | Citas, profesionales, servicios (estética, salud, etc.) |
+   | `commerce` | Catálogo | `commerce/catalog/` | `commerce/catalog/` | `catalog` (`commerce.catalog`) | Artículos, categorías, modificadores |
+   | `commerce` | Inventario y Stock | `commerce/inventory/` | `commerce/inventory/` | `inventory` (`commerce.inventory`) | Existencias, movimientos de stock, ajustes |
+   | `commerce` | Punto de Venta | `commerce/pos/` | `commerce/pos/` | `pos_cashier` (`commerce.pos`) | Arqueo de caja, turnos de cobro presencial |
+   | `crm` / `marketing` | Clientes y Fidelidad | `crm/clients/` | `crm/clients/` | `clients` (`crm.clients`) | Directorio de clientes, cupones, loyalty |
+
+   > [!IMPORTANT]
+   > **Distinción Crítica entre Turnos de Servicios (`services.bookings`) y Reservas de Salón (`tables`):**
+   > El módulo `services.bookings` corresponde a la sección `services` (citas y turnos de servicios para peluquerías, consultorios, estudios). Las reservas de salón gastronómico forman parte del subdominio de salón (`tables`), evitando colisiones de capabilities entre un tenant gastronómico y uno de servicios.
+
+
 
 ### 4.2 Qué vive en cada lugar
 
