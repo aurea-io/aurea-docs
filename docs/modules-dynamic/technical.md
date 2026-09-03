@@ -283,13 +283,18 @@ Reglas obligatorias:
    > **Distinción Inquebrantable entre Turnos de Servicios y Reservas de Salón:**
    > `services.bookings` es exclusivo de citas de servicios profesionales por turno (duración en minutos, profesional asignado). Las reservas de mesa para comer pertenecen al salón gastronómico (`gastronomy.tables.bookings`), impidiendo colisiones entre rubros comerciales.
 
-   * **Flujo de Gobernanza para Agregar Nuevas Páginas o Módulos vía `taxonomy.json`:**
-     La lista de secciones, páginas y módulos autorizados se gobierna centralmente en [`docs/modules-dynamic/taxonomy.json`](./taxonomy.json).
+   * **Gobernanza Modular de Taxonomía y Etiquetas de GitHub (`docs/modules-dynamic/taxonomy/`):**
+     Para evitar un archivo monolítico gigante y desacoplar responsabilidades, la taxonomía se divide en tres archivos modulares:
+     1. [`taxonomy/structure.json`](./taxonomy/structure.json): Contiene la estructura de negocio (Secciones, Páginas y Módulos). De aquí se derivan automáticamente las etiquetas funcionales de GitHub con formato `area:<section>.<page>` (ej: `area:commerce.orders`, `area:services.bookings`).
+     2. [`taxonomy/area.json`](./taxonomy/area.json): Contiene las áreas transversales y de infraestructura (ej: `area:cross`, `area:auth`, `area:ci`, `area:docs`, `area:platform.tenants`). El conjunto total de áreas del ecosistema es la unión matemática de `structure.json` y `area.json`.
+     3. [`taxonomy/type.json`](./taxonomy/type.json): Define los tipos canónicos de issue/PR (`type:feature`, `type:bug`, `type:docs`, `type:refactor`, `type:test`, `type:chore`).
+
+   * **Flujo de Gobernanza para Agregar Nuevas Páginas o Módulos:**
      Para incorporar una nueva página o módulo al sistema sin romper CI:
-     1. **Registro en Taxonomía:** Se añade la nueva página y sus módulos al archivo canónico [`taxonomy.json`](./taxonomy.json) dentro del PR de propuesta o feature.
+     1. **Registro en Taxonomía:** Se añade la nueva página y sus módulos en [`taxonomy/structure.json`](./taxonomy/structure.json) dentro del PR de propuesta o feature.
      2. **Contrato Tipado:** Se define el manifiesto `features.ts` en Frontend y el controlador con `@FeatureDomain('<sección>.<página>')` en Backend.
-     3. **Implementación:** Se crea la carpeta física `src/tenant/sections/<sección>/<nueva-página>/`. El validador de CI lee `taxonomy.json` dinámicamente y aprueba el PR en verde.
-     Cualquier carpeta o endpoint que no figure en `taxonomy.json` o que viole el isomorfismo es rechazado de forma automática por el PR Gate.
+     3. **Implementación:** Se crea la carpeta física `src/tenant/sections/<sección>/<nueva-página>/`. El validador de CI lee `taxonomy/structure.json` dinámicamente y aprueba el PR en verde.
+     Cualquier carpeta o endpoint que no figure en `structure.json` o que viole el isomorfismo es rechazado de forma automática por el PR Gate.
 
 
 
