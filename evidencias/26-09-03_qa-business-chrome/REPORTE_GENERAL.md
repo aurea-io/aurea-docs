@@ -30,9 +30,9 @@ Se encontraron 25 superficies de pantalla entre autenticación, tenant, platafor
 | Facturación | Carga con el plan y módulos incluidos |
 | Equipo | Redirige a `/dashboard` |
 | Invitaciones | Redirige a `/dashboard` |
-| Preview nuevo | `/dashboard` llega al login SPA sin 404; credenciales QA no aceptadas |
+| Preview nuevo | `/dashboard` llega al login SPA sin 404 y `/public/de-santas` carga la vista pública; credenciales QA no aceptadas |
 
-Capturas nuevas: [`capturas/`](./capturas/) con sufijo `-production-retest` y `preview-dashboard-retest-login.jpg`.
+Capturas nuevas: [`capturas/`](./capturas/) con sufijo `-production-retest`, `preview-dashboard-retest-login.jpg` y `preview-public-retest.jpg`.
 
 ## Hallazgos de implementación
 

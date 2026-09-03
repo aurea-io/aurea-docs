@@ -6,6 +6,6 @@
 
 ## UX y faltantes
 
-Validar branding, enlaces de reserva, catálogo visible, responsive y separación de acciones públicas versus privadas. No ejecutado por falta de sesión válida en el Preview.
+La ruta pública carga el branding “Aurea Digital Space” y el estado vacío de catálogo sin 404. Quedan pendientes branding completo, enlaces de reserva, datos de catálogo, responsive y separación de acciones públicas versus privadas.
 
-Evidencia: [`preview-dashboard-retest-login.jpg`](../capturas/preview-dashboard-retest-login.jpg).
+Evidencia: [`preview-dashboard-retest-login.jpg`](../capturas/preview-dashboard-retest-login.jpg) y [`preview-public-retest.jpg`](../capturas/preview-public-retest.jpg).

@@ -17,7 +17,7 @@ Después de esta corrida se implementaron los issues `#77` a `#82` en el fronten
 
 ### Retest publicado del 3 de septiembre
 
-- **Preview nuevo:** ✅ `/dashboard` resuelve al login de la SPA en lugar de devolver 404. Deployment: [`backoffice-fe-aurea-7oea28ypo-aurea-pages-template.vercel.app`](https://backoffice-fe-aurea-7oea28ypo-aurea-pages-template.vercel.app/dashboard), commit `b1b59dd`.
+- **Preview nuevo:** ✅ `/dashboard` resuelve al login de la SPA en lugar de devolver 404 y `/public/de-santas` carga la vista pública sin 404. Deployment: [`backoffice-fe-aurea-8dgeq2zs4-aurea-pages-template.vercel.app`](https://backoffice-fe-aurea-8dgeq2zs4-aurea-pages-template.vercel.app/dashboard), commit `ef1d605`.
 - **Producción:** ⚠️ la sesión autenticada de Chrome todavía muestra `http://localhost:5173/preview/de-santas` y el comportamiento anterior. El fix aún no está promovido a la URL productiva.
 - **Login del preview:** ⚠️ no fue posible completar la autenticación con las credenciales QA disponibles; por eso los fixes protegidos quedan como verificados por código/typecheck, no como aprobados runtime.
 
@@ -49,6 +49,8 @@ Resultado: ✅ El usuario queda identificado como `QA Owner`, con `De Santas Stu
 ![Dashboard autenticado](./capturas/dashboard-real.jpg)
 
 Retest adicional: [dashboard autenticado en producción](./capturas/dashboard-production-retest.jpg) y [login del preview nuevo](./capturas/preview-dashboard-retest-login.jpg).
+
+La ruta pública del Preview también quedó capturada en [`preview-public-retest.jpg`](./capturas/preview-public-retest.jpg).
 
 ### 2. Catálogo (`/catalog`)
 
