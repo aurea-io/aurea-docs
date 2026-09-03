@@ -129,8 +129,10 @@ Toda auditoría ejecutada bajo este Playbook debe verificar de manera obligatori
    * La **feature comercial** contratada por la empresa en el catálogo de planes (`module_catalog`).
    * El **rol / permiso granular** asignable al empleado (`:read` y `:write`).
    * La **ubicación física del código y contratos** (`src/tenant/sections/<sección>/<página>/`).
-4. **Criterio de Auditoría:**
-   Cualquier controlador, servicio, componente visual, decorador o permiso que viole este namespace unívoco debe ser calificado automáticamente como **🔴 DESVÍO CRÍTICO**, generar un issue prioritario en el [Project 2 — Aurea Backlog](https://github.com/orgs/aurea-io/projects/2) y bloquear la aprobación de la sesión.
+4. **Prohibición de "God Services" y Verificación Automática Obligatoria:**
+   Queda terminantemente prohibido que una clase, servicio o cliente HTTP agrupe métodos o consuma endpoints de múltiples dominios disjuntos (antipatrón God Service). En cada sesión de review o pull request, es obligatorio ejecutar el script de auditoría automática `validate-services-cohesion.py` para listar packages, clases y métodos, verificando la estricta cohesión de bounded context antes de emitir cualquier dictamen de aprobación.
+5. **Criterio de Auditoría:**
+   Cualquier controlador, servicio, componente visual, decorador o cliente API que viole este namespace unívoco o agrupe múltiples dominios debe ser calificado automáticamente como **🔴 DESVÍO CRÍTICO**, generar un issue prioritario en el [Project 2 — Aurea Backlog](https://github.com/orgs/aurea-io/projects/2) y bloquear la aprobación de la sesión.
 
 ### Criterio de completitud
 

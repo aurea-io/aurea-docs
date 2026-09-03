@@ -220,6 +220,14 @@ Reglas obligatorias:
    subdominios disjuntos con diferentes namespaces de capabilities. Esta regla
    aplica con idéntico rigor a Backend y Frontend.
 
+   #### Prohibición estricta de "God Services" / Clases Multidominio (Frontend y Backend):
+   - **Cohesión de Bounded Context en Servicios:** Una clase, servicio o cliente HTTP (ej. objetos de llamadas `api.get`, `api.post`) debe pertenecer y operar sobre **un único Bounded Context / Sección**.
+   - **Antipatrón Prohibido (God Service):** Queda terminantemente prohibido agrupar métodos de múltiples secciones o dominios disjuntos dentro de un mismo archivo o clase de servicio (ejemplo de desvío crítico: un `tenant.service.ts` que concentre reservas de `services.bookings`, stock de `commerce.inventory`, mesas de `gastronomy.tables`, comandas de `gastronomy.kitchen`, arqueo de `commerce.pos`, clientes de `crm.clients` y descuentos de `marketing.coupons`).
+   - **Ubicación Canónica de Clientes API:**
+     * Los servicios de dominio nuclear del tenant (`tenant.core`: contexto, settings, branding, members, billing, analytics, navigation) residen en `src/tenant/core/` (o `src/services/tenant.service.ts` conteniendo *únicamente* `tenant.core`).
+     * Los servicios operativos de cada sección/página deben residir dentro de su bounded context en `src/tenant/sections/<sección>/<página>/api.ts` (o `src/services/<sección>/<página>.service.ts`).
+   - **Auditoría y Linter Automatizado:** Todo pull request y sesión de review debe ejecutar el script normativo de cohesión (`validate-services-cohesion.py`), el cual inspecciona packages, clases y métodos, fallando en rojo si un servicio consume endpoints de múltiples dominios disjuntos.
+
    #### Patrón estándar de decoradores (Backend y Frontend):
    Para evitar la repetición manual y propensa a typos de strings completos en
    cada método, se utiliza la composición de dominio y acción:
