@@ -233,27 +233,55 @@ Reglas obligatorias:
      vinculando los componentes visuales directamente a su dominio sin
      hardcodear strings sueltos.
 
-7. **Principio de Bounded Context en Carpetas (1 Carpeta = 1 Negocio / Subdominio):**
-   Una carpeta física en el proyecto nunca debe agrupar más de un negocio o subdominio funcional. Queda estrictamente prohibido el uso de carpetas comodín (por ejemplo, una carpeta `restaurant/` que contenga mesas, comandas y cocina al mismo tiempo).
-   
-   Cada negocio debe disponer de su propia carpeta modular aislada conteniendo exclusivamente sus controladores, servicios, DTOs y manifiestos:
-   * `tenant/sections/<sección>/<negocio>/` en backend y frontend.
-   
-   #### Mapeo Canónico de Secciones y Negocios:
-   | Sección | Negocio / Subdominio | Carpeta Backend (`src/tenant/sections/`) | Carpeta Frontend (`src/tenant/sections/`) | Feature Key / Domain | Responsabilidad |
-   |---|---|---|---|---|---|
-   | `gastronomy` | Salón y Mesas | `gastronomy/tables/` | `gastronomy/tables/` | `tables` (`gastronomy.tables`) | Estado de mesas, layout de salón, QR y reservas de mesa |
-   | `gastronomy` | Comandas y Facturación | `gastronomy/orders/` | `gastronomy/orders/` | `orders` (`gastronomy.orders`) | Pedidos, tickets de mesa, cupones y emisión fiscal |
-   | `gastronomy` | Cocina / KDS | `gastronomy/kitchen/` | `gastronomy/kitchen/` | `kitchen` (`gastronomy.kitchen`) | Pantalla de cocina, estados de preparación y despacho |
-   | `services` | Turnos y Citas de Servicios | `services/bookings/` | `services/bookings/` | `bookings` (`services.bookings`) | Citas, profesionales, servicios (estética, salud, etc.) |
-   | `commerce` | Catálogo | `commerce/catalog/` | `commerce/catalog/` | `catalog` (`commerce.catalog`) | Artículos, categorías, modificadores |
-   | `commerce` | Inventario y Stock | `commerce/inventory/` | `commerce/inventory/` | `inventory` (`commerce.inventory`) | Existencias, movimientos de stock, ajustes |
-   | `commerce` | Punto de Venta | `commerce/pos/` | `commerce/pos/` | `pos_cashier` (`commerce.pos`) | Arqueo de caja, turnos de cobro presencial |
-   | `crm` / `marketing` | Clientes y Fidelidad | `crm/clients/` | `crm/clients/` | `clients` (`crm.clients`) | Directorio de clientes, cupones, loyalty |
+7. **Jerarquía Canónica en 3 Niveles (Sección → Página → Módulo) e Isomorfismo Unificado:**
+   Para que el producto, la interfaz y el código sean 100% coherentes y no existan diccionarios paralelos, se establece una correspondencia estricta de 3 niveles:
+
+   ```text
+   NIVEL 1: SECCIÓN   (Macro-área funcional o departamento: services, commerce, gastronomy, crm, marketing, core)
+      └── NIVEL 2: PÁGINA   (Pantalla que navega el usuario: src/tenant/sections/<sección>/<página>/)
+            └── NIVEL 3: MÓDULOS (Partes, funciones o widgets que se activan/desactivan dinámicamente)
+   ```
+
+   * **¿Qué es un Módulo en Aurea?**
+     Un módulo es una **parte, función o widget dentro de una página que se activa o desactiva dinámicamente según el plan y la configuración del tenant**.
+     - En **Frontend:** Es un componente visual (botón, modal, tab, formulario) que se renderiza u oculta dinámicamente según la capability del tenant (ej. el widget de *"Subir foto"* en reservas o *"Agregar al carrito"* en catálogo).
+     - En **Backend:** Es la capability o subacción que protege los endpoints correspondientes (ej. `@RequireWrite('photo')`).
+     - En **Catálogo (`module_catalog`):** Es la key `<sección>.<página>.<módulo>` (ej. `services.bookings.photo_upload`, `commerce.catalog.add_to_cart`).
+
+   * **Principio de Isomorfismo Unificado (FBAC + RBAC):**
+     El mismo namespace de módulo define de forma unívoca:
+     1. La **feature comercial** contratada por la empresa (si está apagada para el tenant, nadie en la empresa puede verla ni ejecutarla).
+     2. El **rol / permiso granular** asignable al empleado (`:read` y `:write`).
+     3. La **ubicación física del código** en Backend y Frontend (`src/tenant/sections/<sección>/<página>/`).
+
+     *Ejemplos de roles funcionales unificados:*
+     - Cajero: `commerce.pos:*` y `commerce.orders.takeaway:*`.
+     - Cadete / Delivery: `commerce.orders.delivery:*`.
+     - Cocinero: `gastronomy.kitchen:*`.
+     - Mozo: `gastronomy.tables:*`.
+     - Estilista / Profesional: `services.bookings:*`.
+
+   * **Mapeo Canónico de Secciones, Páginas y Módulos:**
+   | Sección (`section`) | Página (`page`) | Carpeta Física (`src/tenant/sections/<sec>/<pag>/`) | Ejemplos de Módulos Dinámicos (`features`) | Propósito en el Negocio Real |
+   |---|---|---|---|---|
+   | **`services`** | `bookings` | `services/bookings/` | `create`, `reschedule`, `photo_upload`, `staff_assignment`, `notifications` | Agenda de turnos y citas profesionales (estética, salud, consultorios) |
+   | **`commerce`** | `catalog` | `commerce/catalog/` | `items`, `add_to_cart`, `variants`, `images`, `stock_badge` | Catálogo de productos y servicios con precios y variantes |
+   | **`commerce`** | `orders` | `commerce/orders/` | `takeaway`, `delivery`, `split_bill`, `fiscal_receipt`, `realtime` | Ventas y pedidos de todos los canales (mostrador, delivery, salón) |
+   | **`commerce`** | `inventory` | `commerce/inventory/` | `minimum_alerts`, `manual_adjust`, `movements_history` | Control de stock, existencias de depósito y alertas de reposición |
+   | **`commerce`** | `pos` | `commerce/pos/` | `shifts`, `blind_closing`, `multi_tender` | Punto de Venta, cobro presencial y arqueo de caja |
+   | **`gastronomy`** | `tables` | `gastronomy/tables/` | `status`, `qr_generator`, `bookings` (reservas de mesa para comer) | Salón, layout de mesas, QR en mesa y reservas anticipadas de salón |
+   | **`gastronomy`** | `kitchen` | `gastronomy/kitchen/` | `timer`, `stage_progression` | Pantalla de cocina (KDS) y despacho de pedidos en tiempo real |
+   | **`crm`** | `clients` | `crm/clients/` | `profile`, `history`, `preferences` | Directorio unificado y fichas de clientes frecuentes |
+   | **`marketing`** | `coupons` | `marketing/coupons/` | `usage_limit`, `min_purchase` | Cupones comerciales de descuento con fechas y topes |
+   | **`marketing`** | `loyalty` | `marketing/loyalty/` | `earn_rules`, `rewards` | Programa de fidelización y puntos canjeables por consumo |
+   | **`core`** | `dashboard`, `members`, `theme`, `billing` | `tenant/core/` | `kpis`, `invitations`, `branding`, `plan_details` | Administración nuclear del tenant (equipo, marca, suscripción) |
 
    > [!IMPORTANT]
-   > **Distinción Crítica entre Turnos de Servicios (`services.bookings`) y Reservas de Salón (`tables`):**
-   > El módulo `services.bookings` corresponde a la sección `services` (citas y turnos de servicios para peluquerías, consultorios, estudios). Las reservas de salón gastronómico forman parte del subdominio de salón (`tables`), evitando colisiones de capabilities entre un tenant gastronómico y uno de servicios.
+   > **`orders` es el Núcleo Transaccional de `commerce`:**
+   > Una orden de venta no pertenece exclusivamente a gastronomía; representa la transacción de compraventa de cualquier comercio (mostrador, delivery o salón). Gastronomía solo aporta el salón (`tables`) y la cocina (`kitchen`).
+   >
+   > **Distinción Inquebrantable entre Turnos de Servicios y Reservas de Salón:**
+   > `services.bookings` es exclusivo de citas de servicios profesionales por turno (duración en minutos, profesional asignado). Las reservas de mesa para comer pertenecen al salón gastronómico (`gastronomy.tables.bookings`), impidiendo colisiones entre rubros comerciales.
 
 
 

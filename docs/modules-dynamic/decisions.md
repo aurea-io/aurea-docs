@@ -51,11 +51,21 @@ Una función no pertenece a una sola pantalla. `services.bookings.photo_upload` 
 - Toda revisión de código o auditoría de evidencias debe marcar como desvío cualquier controlador, servicio o módulo que concentre más de un dominio de capabilities. Esta regla aplica con idéntico rigor a Backend y Frontend.
 - A nivel de implementación, los controladores declaran `@FeatureDomain('<scope>.<dominio>')` a nivel de clase y métodos anotados con `@RequireRead()` / `@RequireWrite()`; en el frontend se adopta el hook contextual simétrico `useDomainPermissions('<scope>.<dominio>')`.
 
-### Bounded Context en Carpetas: 1 Carpeta = 1 Negocio / Subdominio
+### Jerarquía Canónica en 3 Niveles (Sección → Página → Módulo)
 
-- Una carpeta física en el proyecto (`src/tenant/sections/<sección>/<negocio>/`) nunca debe agrupar más de un negocio o subdominio funcional.
-- Se prohíbe el uso de carpetas paraguas como `restaurant/` que amontonen subdominios disjuntos (`tables`, `orders`, `kitchen`). Cada uno de estos subdominios tiene su propio ciclo de vida, DTOs, controllers, servicios y manifiestos de capabilities independientes.
-- Se establece una distinción tajante entre `services.bookings` (turnos y citas de servicios para profesionales/estética) y las reservas de salón gastronómico (`tables`), impidiendo colisiones de capabilities entre diferentes rubros de tenants.
+- **Sección:** Macro-área o departamento de la empresa (`services`, `commerce`, `gastronomy`, `crm`, `marketing`, `core`).
+- **Página:** Pantalla y carpeta física en `src/tenant/sections/<sección>/<página>/` que navega el operador o cliente final (`bookings`, `catalog`, `orders`, `tables`, `inventory`, `pos`, etc.).
+- **Módulo (Feature):** Es una parte, función o widget dentro de la página que se activa o desactiva dinámicamente según el plan y la configuración del tenant (ej. `photo_upload`, `add_to_cart`, `split_bill`, `qr_generator`).
+- **`orders` como Núcleo de `commerce`:** La orden de venta no es exclusiva de gastronomía; representa la transacción de compraventa de cualquier comercio (mostrador, delivery o salón). Gastronomía queda enfocada en salón (`tables`) y cocina (`kitchen`).
+
+### Principio de Isomorfismo Unificado (FBAC + RBAC)
+
+- El mismo string de namespace `<sección>.<página>.<módulo>` define simultáneamente:
+  1. La **feature comercial** contratada por la empresa en su plan (`module_catalog`).
+  2. El **rol / permiso granular** asignable al empleado en su membresía (`:read` y `:write`).
+  3. La **ubicación física del código** en Backend y Frontend (`src/tenant/sections/<sección>/<página>/`).
+- **Doble filtro de seguridad:** Toda acción valida primero si el tenant tiene la feature activa (`FeatureGuard`), y luego si el colaborador particular tiene el rol/permiso para operarla (`PermissionsGuard`).
+- Se establece una distinción inquebrantable entre `services.bookings` (turnos y citas de servicios para profesionales/estética) y las reservas de salón gastronómico (`gastronomy.tables.bookings`), impidiendo colisiones de capabilities entre diferentes rubros comerciales.
 
 
 
