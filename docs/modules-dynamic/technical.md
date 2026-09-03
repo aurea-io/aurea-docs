@@ -380,6 +380,35 @@ export const bookingsManifest = {
 
 La key completa se genera como `services.bookings.photo_upload`. El catálogo se valida en CI para detectar duplicados, features sin owner, rutas sin manifiesto o referencias a capabilities inexistentes.
 
+### 4.5 Regla Canónica de Rutas Jerárquicas (/<sección>/<página>)
+
+Toda superficie o ruta navegable de página en el ecosistema Aurea (frontend y API de navegación) **DEBE** incluir obligatoriamente como prefijo la sección a la que pertenece según la taxonomía oficial de `docs/modules-dynamic/taxonomy/structure.json`:
+
+$$\text{Ruta Canónica} = \text{"/"} + \text{sección} + \text{"/"} + \text{página}$$
+
+#### Tabla Canónica de Rutas de Página
+
+| Sección | Página | Ruta Canónica | Rutas Prohibidas (Legacy / Planas) |
+| :--- | :--- | :--- | :--- |
+| `services` | `bookings` | `/services/bookings` | `/bookings`, `/appointments`, `/booking` |
+| `commerce` | `catalog` | `/commerce/catalog` | `/catalog`, `/products` |
+| `commerce` | `orders` | `/commerce/orders` | `/orders`, `/comandas` |
+| `commerce` | `inventory` | `/commerce/inventory` | `/inventory`, `/stock` |
+| `commerce` | `pos` | `/commerce/pos` | `/pos`, `/caja` |
+| `gastronomy` | `tables` | `/gastronomy/tables` | `/tables`, `/restaurant`, `/salon` |
+| `gastronomy` | `kitchen` | `/gastronomy/kitchen` | `/kitchen`, `/kds` |
+| `gastronomy` | `public` | `/gastronomy/public` | `/public` |
+| `crm` | `clients` | `/crm/clients` | `/clients`, `/customers` |
+| `marketing` | `coupons` | `/marketing/coupons` | `/coupons` |
+| `marketing` | `loyalty` | `/marketing/loyalty` | `/loyalty`, `/puntos` |
+| `core` | `dashboard` | `/core/dashboard` | `/dashboard` (permitido solo como redirect raíz `/`) |
+| `core` | `members` | `/core/members` | `/members`, `/team` |
+| `core` | `theme` | `/core/theme` | `/settings`, `/theme` |
+| `core` | `billing` | `/core/billing` | `/billing`, `/settings/billing` |
+
+> [!CAUTION]
+> **Prohibición de Rutas Planas o Huérfanas de Sección:** Queda estrictamente prohibido definir rutas planas de primer nivel (como `/bookings` o `/catalog`) sin el prefijo de su sección. El script de CI `validate-architecture.py` audita el backend y el frontend, bloqueando automáticamente cualquier pull request que declare o retorne rutas sin prefijo de sección.
+
 ## 5. Modelo MongoDB
 
 Se recomienda separar catálogo global de configuración por tenant. Así se evita copiar el catálogo entero en cada empresa y se mantiene el aislamiento natural: las colecciones de configuración siempre llevan `tenantId`.
