@@ -8,6 +8,7 @@ Este directorio almacena el historial cronológico y versionado de las ejecucion
 
 | Sesión (Fecha/Hora) | BE Aurea (`backoffice-be`) | FE Aurea (`backoffice-fe`) | BE Cliente | FE Cliente (`pages-template`) | Estado | Reporte |
 | :--- | :---: | :---: | :---: | :---: | :---: | :--- |
+| [`26-09-02_23-40`](./26-09-02_23-40/README.md) | `backoffice-be-aurea-internal @ main` | `backoffice-fe-aurea-internal @ main` | `backoffice-be-aurea @ codex/platform-audit` | `backoffice-fe-aurea @ codex/frontend-e2e-validation` | 🟢 APROBADO | Formalización de Jerarquía en 3 Niveles (Sección → Página → Módulo), inclusión de `orders` en `commerce`, e Isomorfismo FBAC+RBAC blindado en el Playbook de Evidencias con Tolerancia Cero. |
 | [`26-09-02_21-28`](./26-09-02_21-28/README.md) | `backoffice-be-aurea-internal @ main` | `backoffice-fe-aurea-internal @ main` | `backoffice-be-aurea @ codex/platform-audit` | `backoffice-fe-aurea @ codex/frontend-e2e-validation` | 🟢 APROBADO | Formalización de Bounded Context en Carpetas (1 Carpeta = 1 Negocio), prohibición de carpetas paraguas y creación de issues #107 y #65 en Project 2. |
 | [`26-09-02_20-18`](./26-09-02_20-18/README.md) | `backoffice-be-aurea-internal @ main @ 9959c18` | `backoffice-fe-aurea-internal @ codex/fix-internal-pwa @ 381494d` | `backoffice-be-aurea @ codex/platform-audit @ e1a442f` | `backoffice-fe-aurea @ codex/frontend-e2e-validation @ 240320a` | 🔴 DESVÍO | Auditoría de código integral: formalización de regla de isomorfismo Feature Key ↔ Package, verificación de builds/tests y creación de 7 issues en Project 2. |
 | [`26-09-02_19-27_internal-platform-production`](./26-09-02_19-27_internal-platform-production/README.md) | `backoffice-be-aurea-internal @ main @ 9959c18` | `backoffice-fe-aurea-internal @ codex/fix-internal-pwa @ 381494d` | `backoffice-be-aurea @ codex/platform-audit @ e1a442f` | `backoffice-fe-aurea @ codex/frontend-e2e-validation @ 240320a` | 🟡 PARCIAL | Deploy Render live, login platform_owner en Chrome, tenants, planes y features con datos sintéticos; aprobación del backend cliente y rotación del usuario de evidencia pendientes. |
@@ -112,6 +113,24 @@ No se debe interpretar silenciosamente una ambigüedad ni adaptar la documentaci
 8. **Generar el reporte de evidencias.** Crear `evidencias/<YY-MM-DD>_<HH-mm>/README.md` siguiendo los reportes existentes. El README debe comenzar con un resumen ejecutivo que indique qué se buscaba verificar y qué se encontró. Debe incluir alcance, commits, entorno, matriz de cobertura, comandos ejecutados, usuarios/roles utilizados sin exponer secretos reales, resultados de código y Chrome, tabla completa de desvíos, enlaces a issues, preguntas abiertas, limitaciones, capturas embebidas con Markdown (`![...](./capturas/...)`) y conclusión. Subir el README y todas las capturas al repositorio. Agregar la nueva sesión al índice/historial de este README principal con enlace, estado y componentes revisados. No declarar aprobación si existe al menos un desvío o una verificación crítica pendiente.
 
 9. **Verificar trazabilidad final.** Cada requisito debe terminar en una de estas salidas: evidencia de cumplimiento, issue con evidencia del desvío, o consulta documentada por definición faltante. Revisar que no haya enlaces rotos, rutas antiguas, capturas sin referencia, capturas sólo enlazadas pero no embebidas, README sin resumen ejecutivo, sesión ausente del índice, hallazgos sin issue o issues no agregados al Project 2. **Comprobar explícitamente en el proyecto que cada issue creado aparece como ítem y registrar el estado del ítem en el reporte.**
+
+### Regla Inquebrantable de Isomorfismo y Jerarquía (Sección → Página → Módulo)
+
+Toda auditoría ejecutada bajo este Playbook debe verificar de manera obligatoria y con tolerancia cero el cumplimiento de la estructura canónica:
+
+1. **Jerarquía en 3 Niveles:**
+   * **SECCIÓN:** Macro-área funcional (`services`, `commerce`, `gastronomy`, `crm`, `marketing`, `core`).
+   * **PÁGINA:** Pantalla navegable y carpeta física obligatoria en `src/tenant/sections/<sección>/<página>/` tanto en Backend como en Frontend.
+   * **MÓDULO:** Partes, funciones o widgets específicos dentro de esa página que se activan o desactivan dinámicamente según plan y configuración.
+2. **Prohibición de Carpetas Paraguas y Páginas Planas:**
+   Queda estrictamente prohibido amontonar páginas o subdominios bajo carpetas comodín (como `restaurant/` o una carpeta `pages/` plana sin sección ni dominio asignado).
+3. **Principio de Isomorfismo Unificado (FBAC + RBAC):**
+   El namespace `<sección>.<página>.<módulo>` debe ser unívoco y coincidir 1:1 entre:
+   * La **feature comercial** contratada por la empresa en el catálogo de planes (`module_catalog`).
+   * El **rol / permiso granular** asignable al empleado (`:read` y `:write`).
+   * La **ubicación física del código y contratos** (`src/tenant/sections/<sección>/<página>/`).
+4. **Criterio de Auditoría:**
+   Cualquier controlador, servicio, componente visual, decorador o permiso que viole este namespace unívoco debe ser calificado automáticamente como **🔴 DESVÍO CRÍTICO**, generar un issue prioritario en el [Project 2 — Aurea Backlog](https://github.com/orgs/aurea-io/projects/2) y bloquear la aprobación de la sesión.
 
 ### Criterio de completitud
 
