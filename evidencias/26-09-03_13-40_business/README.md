@@ -1,30 +1,38 @@
 # 📋 Reporte de Evidencia: Review Integral QA y UX/UI — Business Backoffice Multitenant
 
-- **Fecha/Hora:** `2026-09-03 13:40 UTC-3`
+- **Fecha/Hora:** `2026-09-03 14:05 UTC-3`
 - **Ámbito:** `business-frontend` y `business-backend` (Aurea Business Backoffice)
+- **Base de Datos:** MongoDB Atlas Cluster en vivo (`AureaCluster`)
+- **Tenant Real Auditado:** `De Santas Studio` (Slug: `de-santas`, Vertical: `Belleza`)
+- **Usuario de Prueba Real:** `qa.owner@aurea.test` (Rol: `OWNER`, 5 miembros en equipo)
 - **Entorno:** Localhost (`http://localhost:5173` frontend, `http://localhost:3001` backend)
-- **Navegador / Engine:** Google Chrome Headless via Chrome DevTools Protocol (CDP, Viewport 1280x800)
-- **Estado de la Sesión:** 🟢 **APROBADO**
+- **Navegador / Engine:** Google Chrome Headless via Chrome DevTools Protocol (CDP, Viewport 1440x900)
+- **Estado de la Sesión:** 🟡 **OBSERVACIONES / DESVÍOS DETECTADOS**
 
 ---
 
-## 🎯 1. Resumen Ejecutivo
+## 🎯 1. Resumen Ejecutivo y Rectificación de Tolerancia Cero
 
 ### Objetivo
-Ejecutar una revisión exhaustiva de Aseguramiento de la Calidad (QA) y Experiencia/Diseño de Usuario (UX/UI) sobre la plataforma operativa para negocios cliente (`business-frontend` y `business-backend`), validando la jerarquía canónica de 3 niveles (Sección → Página → Módulo), el isomorfismo FBAC+RBAC, la cohesión de servicios (ausencia total de God Services y shims) y la fidelidad de interfaz en cada bounded context.
+Ejecutar una revisión exhaustiva de Aseguramiento de la Calidad (QA) y Experiencia/Diseño de Usuario (UX/UI) sobre el backoffice operativo de comercios clientes, conectado en tiempo real al clúster de **MongoDB Atlas**, contrastando la jerarquía de 3 niveles, el comportamiento ante módulos contratados y no contratados, y la capacidad de autogestión del comerciante.
 
-### Hallazgos Principales
-1. **Isomorfismo y Bounded Context al 100%:** Tras la refactorización canónica, la aplicación expone de forma directa y unívoca cada sección de negocio en su propio módulo:
-   - `services` → `bookings`
-   - `commerce` → `orders`, `inventory`, `pos`
-   - `gastronomy` → `tables`, `kitchen`
-   - `crm` → `clients`
-   - `marketing` → `coupons`, `loyalty`
-   - `core` → `dashboard`, `theme/settings`, `members`, `billing`
-2. **Cero Shims y Cero Carpetas Paraguas:** No existen carpetas puente (`restaurant/`, `pages/` planas) ni clases multipropósito. Cada entidad posee su propio cliente API (`api.ts`), sus features (`features.ts`) y su componente visual autocontenido.
-3. **QA & Aislamiento Multi-Tenant:** `useTenantStore` administra de forma limpia el `activeTenantId`, sincronizando las capacidades comerciales (FBAC) y los roles operativos (RBAC) para habilitar o restringir el menú de navegación dinámicamente.
-4. **UX/UI & Calidad Visual:** La interfaz ofrece una estética moderna, profesional y altamente pulida, con fondo oscuro refinado (`#0f172a`), tipografía sans-serif legible, cards con elevaciones sutiles, badges de estado semánticos y transiciones fluidas.
-5. **Pruebas Automatizadas:** 49/49 suites unitarias en `business-backend`, compilación limpia en producción de `business-frontend`, y 15 entidades evaluadas en `validate-services-cohesion.py` sin una sola violación de bounded context.
+### ⚠️ Rectificación de la Auditoría Preliminar (Principio de Tolerancia Cero)
+En la iteración previa se emitieron capturas de pantalla de 14 KB (pantallas en blanco) al intentar forzar la navegación directa a rutas de módulos no contratados por el tenant (tales como `/tables`, `/kitchen`, `/pos`, `/inventory`, `/clients`, `/coupons`, `/loyalty`), y erróneamente se catalogaron como "🟢 CUMPLE". 
+
+Bajo el **Playbook de Evidencias Asistida por IA de Aurea**, esta clasificación es **INCORRECTA**:
+- **Causa Raíz:** El tenant `De Santas Studio` posee contratadas las features de `catalog`, `appointments` (reservas), `members`, `settings` y `billing`. Al navegar directamente a módulos ajenos a su plan, el guard `CapabilityRoute` intercepta la solicitud y la aplicación colapsa a pantalla en blanco o redirige sin feedback explicativo.
+- **Desvío Normativo:** La falta de una pantalla amigable de "Módulo no contratado / Paywall de Upgrade" y la visualización de pantallas en blanco constituye un **🔴 DESVÍO CRÍTICO DE UX/UI**.
+
+### Hallazgos Principales de la Ejecución en Vivo con MongoDB Atlas
+1. **Autenticación y Contexto Real:** El usuario `qa.owner@aurea.test` inicia sesión de forma fluida contra el backend en `http://localhost:3001`. Se carga el contexto del tenant `De Santas Studio` con sus 5 colaboradores y datos reales.
+2. **Navegación Dinámica según Plan:** La barra lateral de navegación renderiza con precisión únicamente los módulos autorizados por la base de datos:
+   - **Comercio:** `Catálogo` (`/catalog`).
+   - **Servicios:** `Agenda de Turnos` (`/appointments`).
+   - **Principal / Core:** `Resumen` (`/dashboard`), `Equipo` (`/members`), `Configuración` (`/settings`), `Plan y Facturación` (`/settings/billing`).
+3. **🔴 DESVÍOS FUNCIONALES DETECTADOS:**
+   - **Falta Menú de Autogestión de Secciones para el Owner:** El usuario con rol `OWNER` **no tiene ninguna pantalla ni menú para gestionar las secciones y páginas de su negocio** (activar o desactivar funciones según la operativa del local).
+   - **Ruta Legacy en API de Navegación:** El backend continúa retornando `path: "/appointments"` en vez de la ruta canónica normada `/bookings`.
+   - **Empty States Pasivos:** Las pantallas vacías (Reservas sin turnos, Catálogo sin productos) muestran texto plano sin botones para guiar la creación del primer ítem.
 
 ---
 
@@ -32,104 +40,116 @@ Ejecutar una revisión exhaustiva de Aseguramiento de la Calidad (QA) y Experien
 
 | Dimensión de Diseño | Evaluación | Observaciones y Análisis |
 | :--- | :---: | :--- |
-| **Arquitectura de Información** | 🟢 Excelente | El menú lateral organiza los módulos agrupándolos por dominio de negocio (Operaciones, Gastronomía, Ventas, Fidelización, Ajustes), facilitando la localización inmediata para el comerciante. |
-| **Jerarquía y Escala Tipográfica** | 🟢 Excelente | Encabezados claros (`h1`, `h2`), subtítulos en tonalidad atenuada (`text-slate-400`), tablas bien espaciadas y badges con bordes redondeados y texto en mayúsculas compacto. |
-| **Modos y Paleta de Colores** | 🟢 Conforme | Tonos primarios azul/índigo sobrios para acciones primarias, acentos verdes para estados completados/aprobados, ámbar para pendientes y rojo para alertas de stock o reservas canceladas. |
-| **Densidad de Información** | 🟢 Conforme | Balance adecuado entre espaciado para tablets/desktop en ambientes operativos (como POS y Comandera de Cocina) y densidad informativa en listados (Inventario, Órdenes). |
-| **Feedback Interactivo** | 🟢 Conforme | Los botones presentan micro-animaciones al hacer hover, estados de carga mediante spinners discretos y mensajes informativos ante acciones de guardado. |
+| **Jerarquía y Estructura de Navegación** | 🟢 Conforme | Sidebar fija a la izquierda con separación por secciones (`Comercio`, `Servicios`, `Principal`), botón de colapso de módulos y ficha del usuario logueado en el pie. |
+| **Diseño y Estética Visual** | 🟢 Excelente | Fondo oscuro pulido (`#0c0d12`), tipografía con familias serif editoriales para títulos y sans-serif clara para datos operativos, bordes sutiles y micro-interacciones suaves. |
+| **Experiencia de Onboarding / Empty States** | 🟡 Aceptable | Cuando una sección no tiene datos (ej: Reservas), se muestra "No hay reservas para mostrar". Falta un CTA primario (ej: "+ Nueva Reserva" o "Crear primer servicio"). |
+| **Manejo de Módulos No Contratados (Paywall / Upsell)** | 🔴 Desvío Severo | Si el usuario ingresa manualmente a una URL fuera de su plan (como `/tables`), la pantalla queda en blanco o sin feedback. Debe existir una pantalla de Upsell que explique que la función pertenece a otro plan. |
+| **Autogestión de Secciones por el Comerciante** | 🔴 Desvío Severo | El comerciante no tiene ningún centro de control para decidir qué secciones mostrar en su menú diario, quedando cautivo de la configuración predeterminada de la base de datos. |
 
 ---
 
-## 🧪 3. Matriz de Pruebas QA (Funcional y de Integración)
+## 🧪 3. Matriz de Pruebas QA (Funcional y de Integración con Datos Reales)
 
-| ID Test | Sección / Página Auditada | Ruta | Verificación QA | Veredicto |
-| :---: | :--- | :--- | :--- | :---: |
-| **QA-BUS-01** | Autenticación / Login | `/login` | Render de inputs, botón mágico y OAuth | 🟢 CUMPLE |
-| **QA-BUS-02** | Validación de Credenciales | `/login` | Manejo de error controlado ante credenciales fallidas | 🟢 CUMPLE |
-| **QA-BUS-03** | Guardia de Ruta no Autenticada | `/dashboard` | Redirección a `/login` para usuarios anónimos | 🟢 CUMPLE |
-| **QA-BUS-04** | Dashboard Operativo | `/dashboard` | Resumen de métricas del tenant activo | 🟢 CUMPLE |
-| **QA-BUS-05** | Reservas de Servicios | `/bookings` | Listado, filtros por estado y creación | 🟢 CUMPLE |
-| **QA-BUS-06** | Pedidos y Órdenes | `/orders` | Pipeline de pedidos (Takeaway, Salón, Delivery) | 🟢 CUMPLE |
-| **QA-BUS-07** | Salón y Mesas | `/tables` | Mapa de mesas y reservas gastronómicas | 🟢 CUMPLE |
-| **QA-BUS-08** | Cocina / KDS | `/kitchen` | Pantalla de comandas en tiempo real | 🟢 CUMPLE |
-| **QA-BUS-09** | Stock e Inventario | `/inventory` | Catálogo de insumos y alertas de stock mínimo | 🟢 CUMPLE |
-| **QA-BUS-10** | Punto de Venta (POS) | `/pos` | Terminal de caja, apertura de turno y cobro | 🟢 CUMPLE |
-| **QA-BUS-11** | Clientes (CRM) | `/clients` | Ficha de cliente, historial y segmentación | 🟢 CUMPLE |
-| **QA-BUS-12** | Cupones de Descuento | `/coupons` | Promociones con reglas de límite y vigencia | 🟢 CUMPLE |
-| **QA-BUS-13** | Club de Fidelización | `/loyalty` | Programa de puntos y canje de recompensas | 🟢 CUMPLE |
-| **QA-BUS-14** | Equipo y Miembros | `/members` | Gestión de colaboradores y roles granulares | 🟢 CUMPLE |
-| **QA-BUS-15** | Configuración de Marca | `/settings` | Paleta de colores, logo y configuración del tenant | 🟢 CUMPLE |
+| ID Test | Sección / Pantalla | Ruta | Resultado Esperado | Resultado Observado en Vivo | Veredicto |
+| :---: | :--- | :--- | :--- | :--- | :---: |
+| **QA-BUS-01** | Login Real con Atlas | `/login` | Autenticación de `qa.owner@aurea.test` | Token JWT emitido y redirección a dashboard | 🟢 CUMPLE |
+| **QA-BUS-02** | Validación de Credenciales | `/login` | Error semántico ante contraseña incorrecta | Feedback visual de error | 🟢 CUMPLE |
+| **QA-BUS-03** | Protección de Rutas | `/dashboard` sin token | Redirección obligatoria a `/login` | Interceptado por `ProtectedRoute` | 🟢 CUMPLE |
+| **QA-BUS-04** | Dashboard Multitenant | `/dashboard` | Contexto de `De Santas Studio` (5 miembros) | Métricas, slug y datos reales de Atlas renderizados | 🟢 CUMPLE |
+| **QA-BUS-05** | Agenda y Reservas | `/appointments` | Lista de turnos y módulos de agenda | Pantalla montada con módulos canónicos de servicios | 🟢 CUMPLE |
+| **QA-BUS-06** | Catálogo de Productos | `/catalog` | Grilla de artículos o estado vacío guiado | Catálogo montado con tabs y filtros por categoría | 🟢 CUMPLE |
+| **QA-BUS-07** | Equipo y Miembros | `/members` | Listado de colaboradores del tenant | Tabla de 5 colaboradores con roles (`OWNER`, etc.) | 🟢 CUMPLE |
+| **QA-BUS-08** | Configuración & Marca | `/settings` | Edición de tema, colores y datos del local | Formulario de branding y perfil montado | 🟢 CUMPLE |
+| **QA-BUS-09** | Plan y Facturación | `/settings/billing` | Información del plan activo del tenant | Resumen de plan activo cargado desde backend | 🟢 CUMPLE |
+| **QA-BUS-10** | **Módulo no contratado (Mesas/Salón)** | `/tables` | Pantalla informativa de módulo no incluido | **Pantalla en blanco / sin feedback explicativo** | 🔴 **DESVÍO** |
+| **QA-BUS-11** | **Autogestión de Secciones por Owner** | `/settings/modules` | Menú para activar/apagar secciones | **Inexistente en la aplicación** | 🔴 **DESVÍO** |
+| **QA-BUS-12** | **Nomenclatura Canónica de Rutas** | API `/navigation` | Devolver `/bookings` | **Retorna `/appointments` (ruta legacy)** | 🔴 **DESVÍO** |
 
 ---
 
-## 📸 4. Evidencias Visuales Embebidas
+## 💡 4. Funciones Sugeridas y Roadmap de Producto (Business Backoffice)
 
-### 01. Acceso al Backoffice Comercial (Login)
+Para optimizar la experiencia de los dueños de negocio y garantizar la autonomía operativa, se sugiere incorporar:
+
+### 1. Centro de Control de Secciones y Módulos (`/settings/sections` o `/settings/modules`)
+- **Objetivo:** Permitir al usuario con rol `OWNER` o `MANAGER` activar o desactivar las secciones y páginas contratadas en su plan según la modalidad operativa de su local.
+- **Funcionalidad:**
+  - Panel visual de switches interactivos agrupados por Sección:
+    - *Servicios:* Switch general "Habilitar Agenda de Turnos", sub-toggles para "Recordatorios automáticos" y "Fotos de referencia".
+    - *Comercio:* Switches para "Catálogo online", "Control de existencias/stock" y "Terminal Punto de Venta (POS)".
+    - *Gastronomía:* Switch "Salón y Mesas" (un local que solo realiza delivery o takeaway debe poder apagar el mapa de mesas para limpiar su menú).
+    - *Marketing:* Switches para "Campañas de Cupones" y "Programa de Fidelización".
+  - Al apagar una sección, el menú lateral se simplifica automáticamente, reduciendo la carga cognitiva del personal de caja y mozos.
+
+### 2. Pantalla de Upsell / Paywall Amigable para Módulos no Contratados
+- **Objetivo:** Erradicar pantallas en blanco cuando un empleado o cliente accede a una URL de una función fuera de su plan (ej: `/tables` en un comercio de belleza).
+- **Componente Visual:**
+  - Tarjeta ilustrada: *"Esta función (Mesas y Salón) no está incluida en tu Plan Evidence Basic actual"*.
+  - Lista de beneficios clave del módulo.
+  - Botón primario: *"Solicitar activación a Soporte"* o *"Ver Planes Disponibles"*.
+
+### 3. Empty States Accionables con Onboarding Paso a Paso
+- **En Agenda (`/bookings`):** En lugar de solo mostrar "No hay reservas para mostrar", incluir botón "+ Agendar primer turno manual" y enlace para "Configurar horarios de atención".
+- **En Catálogo (`/catalog`):** Botón "+ Cargar primer producto/servicio" y opción de "Importar desde Excel/CSV".
+
+### 4. Gestor de Horarios y Turnos Operativos (`/settings/schedules`)
+- Configuración de días y franjas de apertura del local, tiempo de anticipación para reservas de clientes, y franjas de descanso.
+
+### 5. Selector Rápido de Negocios en Topbar (Multi-Tenant Switcher)
+- Dropdown accesible en el encabezado superior para aquellos usuarios que poseen más de una sucursal o comercio vinculado a su misma cuenta de email.
+
+---
+
+## 📸 5. Evidencias Visuales Embebidas (Datos Reales de MongoDB Atlas)
+
+### 01. Pantalla de Acceso Comercial (Login)
 ![01_business_login](./capturas/01_business_login.png)
-*Figura 1: Pantalla de inicio de sesión multitenant con soporte de contraseña, enlace mágico y Google.*
+*Figura 1: Pantalla de inicio de sesión multitenant con soporte de clave, magic link y Google.*
 
-### 02. Feedback de Validación en Acceso
+### 02. Validación de Credenciales en Acceso
 ![02_business_login_feedback](./capturas/02_business_login_feedback.png)
-*Figura 2: Alerta interactiva de validación ante intento de acceso no reconocido.*
+*Figura 2: Alerta interactiva ante credenciales no autorizadas.*
 
 ### 03. Guardia de Protección de Rutas
 ![03_business_protected_route](./capturas/03_business_protected_route.png)
-*Figura 3: Intercepción inmediata de navegación anónima hacia rutas protegidas.*
+*Figura 3: Intercepción automática de navegación directa anónima hacia `/dashboard`.*
 
-### 04. Dashboard Principal del Tenant
+### 04. Dashboard Operativo Real del Tenant `De Santas Studio`
 ![04_business_dashboard](./capturas/04_business_dashboard.png)
-*Figura 4: Panel principal con resumen de actividad, módulos contratados y accesos directos.*
+*Figura 4: Panel operativo conectado en vivo a Atlas: tenant De Santas Studio (vertical Belleza), 5 miembros, usuario QA Owner (OWNER).*
 
-### 05. Sección Servicios: Gestión de Reservas
+### 05. Sección Servicios: Agenda y Reservas de Turnos
 ![05_business_bookings](./capturas/05_business_bookings.png)
-*Figura 5: Módulo canónico `services.bookings` para agendamiento y turnos.*
+*Figura 5: Pantalla real de agenda con módulos secundarios desplegados en sidebar (Crear turnos, Recordatorios, Fotos, Reprogramar).*
 
-### 06. Sección Comercio: Órdenes y Pedidos
-![06_business_orders](./capturas/06_business_orders.png)
-*Figura 6: Módulo canónico `commerce.orders` para gestión de pedidos en sala y delivery.*
+### 06. Sección Comercio: Catálogo de Productos y Servicios
+![06_business_catalog](./capturas/06_business_catalog.png)
+*Figura 6: Módulo de catálogo en vivo cargado desde la base de datos real.*
 
-### 07. Sección Gastronomía: Mapa de Mesas
-![07_business_tables](./capturas/07_business_tables.png)
-*Figura 7: Módulo canónico `gastronomy.tables` para disposición y estado de mesas.*
+### 07. Sección Core: Equipo y Colaboradores
+![07_business_members](./capturas/07_business_members.png)
+*Figura 7: Directorio real de 5 colaboradores del tenant De Santas Studio con roles granulares.*
 
-### 08. Sección Gastronomía: Comandera de Cocina (KDS)
-![08_business_kitchen](./capturas/08_business_kitchen.png)
-*Figura 8: Módulo canónico `gastronomy.kitchen` optimizado para visualización en cocina.*
+### 08. Sección Core: Configuración de Marca y Tema
+![08_business_settings](./capturas/08_business_settings.png)
+*Figura 8: Módulo de configuración visual y datos generales del comercio.*
 
-### 09. Sección Comercio: Inventario y Stock
-![09_business_inventory](./capturas/09_business_inventory.png)
-*Figura 9: Módulo canónico `commerce.inventory` para control de existencias.*
+### 09. Sección Core: Plan y Facturación
+![09_business_billing](./capturas/09_business_billing.png)
+*Figura 9: Resumen del plan comercial asignado al tenant.*
 
-### 10. Sección Comercio: Punto de Venta (POS)
-![10_business_pos](./capturas/10_business_pos.png)
-*Figura 10: Módulo canónico `commerce.pos` para cobro ágil y arqueo de caja.*
-
-### 11. Sección CRM: Directorio de Clientes
-![11_business_clients](./capturas/11_business_clients.png)
-*Figura 11: Módulo canónico `crm.clients` para fidelización y perfil de clientes.*
-
-### 12. Sección Marketing: Cupones Promocionales
-![12_business_coupons](./capturas/12_business_coupons.png)
-*Figura 12: Módulo canónico `marketing.coupons` para campañas comerciales.*
-
-### 13. Sección Marketing: Programa de Fidelización
-![13_business_loyalty](./capturas/13_business_loyalty.png)
-*Figura 13: Módulo canónico `marketing.loyalty` con acumulación de puntos.*
-
-### 14. Sección Core: Gestión de Miembros y Permisos
-![14_business_members](./capturas/14_business_members.png)
-*Figura 14: Módulo `core.members` para administración de personal y roles operativos.*
-
-### 15. Sección Core: Configuración de Marca y Tema
-![15_business_settings](./capturas/15_business_settings.png)
-*Figura 15: Módulo `core.theme` para personalización visual del tenant.*
+### 10. Evidencia del Desvío: Intento de Acceso a Módulo Fuera de Plan (`/tables`)
+![10_business_unsubscribed_module](./capturas/10_business_unsubscribed_module.png)
+*Figura 10: Evidencia visual del desvío: al ingresar a una URL no contratada, la UI no ofrece un paywall amigable ni explicación de plan.*
 
 ---
 
-## 🛠️ 5. Conclusiones y Dictamen
+## 🛠️ 6. Conclusión y Dictamen Final
 
-La arquitectura y experiencia de usuario del backoffice comercial (`business-frontend` y `business-backend`) cumplen al 100% con los principios normativos de `aurea-docs`:
-- **Isomorfismo:** Coincidencia exacta 1:1 entre feature comercial, permiso granular y ubicación física del código.
-- **Cohesión:** Servicios independientes sin clases "God Service" ni carpetas comodín.
-- **Estabilidad y Diseño:** Navegación sólida, guardias robustos y estética visual de primer nivel.
-- **Dictamen:** 🟢 **APROBADO**.
+La aplicación comercial `business-frontend` y su backend asociado operan de forma estable y fluida conectados al clúster productivo de MongoDB Atlas. Sin embargo, aplicando con máxima rigurosidad el principio de **Tolerancia Cero**:
+
+- **Dictamen:** 🟡 **OBSERVACIONES / DESVÍOS DETECTADOS**.
+- **Desvíos a Subsanar:**
+  1. Desarrollar la pantalla de Autogestión de Secciones para el Owner (`/settings/modules`).
+  2. Implementar pantalla de Paywall / Upsell explicativa para módulos fuera del plan contratado.
+  3. Corregir la ruta `/appointments` hacia la canónica `/bookings` en la respuesta de la API de navegación.
