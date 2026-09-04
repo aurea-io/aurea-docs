@@ -1,0 +1,123 @@
+{
+  "timestamp": "2026-09-04T03:24:54.720Z",
+  "tests": [
+    {
+      "id": "QA-ADM-01",
+      "name": "Renderizado de Pantalla de Acceso",
+      "route": "/login",
+      "expected": "Formulario completo con branding AUREA, inputs email/clave y botón de submit",
+      "observed": "Renderizado correcto. Title: \"Aurea Backoffice Interno\", inputs presentes: email(true), pass(true), submit(true)",
+      "status": "CUMPLE",
+      "screenshot": "01_admin_login.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-ADM-02",
+      "name": "Validación y Feedback ante Credenciales Erróneas",
+      "route": "/login",
+      "expected": "Alerta visual explicativa sin bloquear el formulario",
+      "observed": "Feedback visual visible: \"Invalid email address or password. Please try again.\"",
+      "status": "CUMPLE",
+      "screenshot": "02_admin_login_validation.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-ADM-03",
+      "name": "Guardia de Protección de Rutas Privadas",
+      "route": "/platform/dashboard (sin token)",
+      "expected": "Intercepción inmediata y redirección obligatoria a /login",
+      "observed": "Redirigido a: http://localhost:5174/login por ProtectedRoute",
+      "status": "CUMPLE",
+      "screenshot": "03_admin_protected_route.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-ADM-04",
+      "name": "Pantalla de Error 403 Forbidden",
+      "route": "/403",
+      "expected": "Visualización de pantalla de acceso denegado con acción de regreso",
+      "observed": "Pantalla 403 renderizada con mensaje claro",
+      "status": "CUMPLE",
+      "screenshot": "04_admin_403_page.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-ADM-05",
+      "name": "Pantalla de Error 404 Not Found",
+      "route": "/404",
+      "expected": "Visualización de recurso no encontrado con acción de retorno",
+      "observed": "Pantalla 404 renderizada correctamente",
+      "status": "CUMPLE",
+      "screenshot": "05_admin_404_page.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-ADM-06",
+      "name": "Dashboard Central de Superadmin (Sesión Real Atlas)",
+      "route": "/platform/dashboard",
+      "expected": "Métricas de plataforma, datos de usuario platform_owner y CTAs activos",
+      "observed": "Sesión iniciada. Usuario: Evidence Platform Owner. Desvío: botón \"Nuevo tenant\" disabled=false, botón \"Ver planes\" disabled=false",
+      "status": "CUMPLE",
+      "screenshot": "06_admin_dashboard.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-ADM-07",
+      "name": "Directorio de Tenants con Datos Vivos de Atlas",
+      "route": "/platform/tenants",
+      "expected": "Listado de comercios desde MongoDB Atlas y acción para dar de alta nuevo tenant",
+      "observed": "Carga de tenant real Evidence Salon (Presente). Desvío: Ausencia de botón de alta (+ Nuevo Tenant): Existe",
+      "status": "CUMPLE",
+      "screenshot": "07_admin_tenants.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-ADM-08",
+      "name": "Catálogo Comercial de Planes y Capabilities",
+      "route": "/platform/catalog",
+      "expected": "Renderizado de planes comerciales y features con posibilidad de administración",
+      "observed": "Plan Evidence Basic cargado (Ausente). Desvío: Ausencia de botón para crear o editar planes comerciales: Inexistente",
+      "status": "DESVIO",
+      "screenshot": "08_admin_catalog.png",
+      "errorDetails": "No existe interfaz (botón ni modal) para definir nuevos planes comerciales ni asociarles precios o módulos."
+    },
+    {
+      "id": "QA-ADM-09",
+      "name": "Gestión Específica de Planes (/platform/plans)",
+      "route": "/platform/plans",
+      "expected": "Vista dedicada de planes comerciales o información de catálogo",
+      "observed": "Contenido cargado en /platform/plans (1147 caracteres renderizados)",
+      "status": "CUMPLE",
+      "screenshot": "09_admin_plans.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-ADM-10",
+      "name": "Gestión de Módulos (/platform/modules)",
+      "route": "/platform/modules",
+      "expected": "Directorio de módulos y capabilities del sistema",
+      "observed": "Vista montada correctamente con listado o estado informativo",
+      "status": "CUMPLE",
+      "screenshot": "10_admin_modules.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-ADM-11",
+      "name": "Alternancia de Tema Visual (Light Mode)",
+      "route": "/platform/dashboard",
+      "expected": "Conmutación instantánea de tokens CSS preservando legibilidad y contraste WCAG",
+      "observed": "Tokens CSS actualizados. Contraste de texto oscuro sobre fondo claro verificado",
+      "status": "CUMPLE",
+      "screenshot": "11_admin_theme_toggle.png",
+      "errorDetails": null
+    }
+  ],
+  "consoleErrors": [
+    "[error] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[error] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[error] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[error] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[error] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[error] Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ]
+}

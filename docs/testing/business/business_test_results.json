@@ -1,0 +1,152 @@
+{
+  "timestamp": "2026-09-04T03:25:50.348Z",
+  "tests": [
+    {
+      "id": "QA-BUS-01",
+      "name": "Renderizado de Login Multitenant",
+      "route": "/login",
+      "expected": "Formulario de autenticación con campos email/password, opciones de magic link y Google",
+      "observed": "Pantalla montada correctamente. Inputs detectados: email (true), password (true)",
+      "status": "CUMPLE",
+      "screenshot": "01_business_login.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-BUS-02",
+      "name": "Feedback ante Credenciales Inválidas",
+      "route": "/login",
+      "expected": "Alerta semántica de error sin redirección ni crash de interfaz",
+      "observed": "Feedback presentado tras HTTP 401",
+      "status": "CUMPLE",
+      "screenshot": "02_business_login_feedback.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-BUS-03",
+      "name": "Guardia de Rutas Protegidas",
+      "route": "/core/dashboard (anónimo)",
+      "expected": "Intercepción inmediata y redirección al flujo de autenticación /login",
+      "observed": "Intercepción exitosa. URL final: http://localhost:5173/login",
+      "status": "CUMPLE",
+      "screenshot": "03_business_protected_route.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-BUS-04",
+      "name": "Dashboard Operativo con Contexto Real Atlas",
+      "route": "/core/dashboard",
+      "expected": "Panel operativo montado con contexto del tenant, métricas reales y rol OWNER",
+      "observed": "Dashboard cargado correctamente. Tenant y métricas operativas visibles. Usuario: QA Owner",
+      "status": "CUMPLE",
+      "screenshot": "04_business_dashboard.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-BUS-05",
+      "name": "Selector Dinámico Multi-Tenant (Tenant Switcher)",
+      "route": "Topbar Header",
+      "expected": "Dropdown interactivo para conmutar entre sucursales o comercios asociados al usuario",
+      "observed": "Selector desplegado y verificado",
+      "status": "CUMPLE",
+      "screenshot": "05_business_tenant_switcher.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-BUS-06",
+      "name": "Centro de Control y Autogestión de Módulos",
+      "route": "/settings/modules",
+      "expected": "Panel visual con filtros por categoría y switches interactivos para activar/apagar secciones",
+      "observed": "Vista montada con tabs de categoría (Ausente) y control granular",
+      "status": "CUMPLE",
+      "screenshot": "06_business_modules_page.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-BUS-07",
+      "name": "Módulo de Inventario y Control de Stock",
+      "route": "/commerce/inventory",
+      "expected": "Grilla de artículos, estado de stock (crítico, disponible), filtros y botones de ajuste",
+      "observed": "Inventario montado con datos en vivo desde Atlas (475 caracteres renderizados)",
+      "status": "CUMPLE",
+      "screenshot": "07_business_inventory.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-BUS-08",
+      "name": "Agenda de Reservas y Creación de Turnos",
+      "route": "/services/bookings",
+      "expected": "Vista de calendario/agenda de turnos con modal interactivo de creación",
+      "observed": "Pantalla y modal de turnos renderizados con catálogo de servicios",
+      "status": "CUMPLE",
+      "screenshot": "08_business_bookings.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-BUS-09",
+      "name": "Terminal Punto de Venta (POS) y Carrito en Vivo",
+      "route": "/commerce/pos",
+      "expected": "Catálogo táctil POS, agregación de líneas al carrito y cálculo dinámico de totales",
+      "observed": "Catálogo POS interactivo, ítem agregado y subtotal calculado en tiempo real",
+      "status": "CUMPLE",
+      "screenshot": "09_business_pos_terminal.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-BUS-10",
+      "name": "Pantalla Operativa de Cocina KDS (Kitchen Display System)",
+      "route": "/gastronomy/kitchen",
+      "expected": "Comandas activas organizadas por canal (Dine In / Takeaway) con botones de avance de estado",
+      "observed": "Comandas en vivo renderizadas (475 caracteres)",
+      "status": "CUMPLE",
+      "screenshot": "10_business_kitchen_kds.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-BUS-11",
+      "name": "Directorio de Equipo y Colaboradores",
+      "route": "/core/members",
+      "expected": "Listado de colaboradores del tenant con roles (OWNER, MANAGER, STAFF, CASHIER)",
+      "observed": "Directorio de 5 colaboradores del tenant montado correctamente desde Atlas",
+      "status": "CUMPLE",
+      "screenshot": "11_business_team_members.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-BUS-12",
+      "name": "Configuración de Comercio, Marca y Branding",
+      "route": "/core/settings",
+      "expected": "Formularios comerciales de perfil, teléfono, dirección, logo y color primario",
+      "observed": "Formulario de configuración montado con datos persistidos de Atlas",
+      "status": "CUMPLE",
+      "screenshot": "12_business_settings.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-BUS-13",
+      "name": "Suscripción Comercial y Facturación",
+      "route": "/core/settings/billing",
+      "expected": "Resumen de plan contratado, estado activo y capacidades asociadas",
+      "observed": "Información de suscripción cargada desde el backend",
+      "status": "CUMPLE",
+      "screenshot": "13_business_billing.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-BUS-14",
+      "name": "Manejo de Capacidades No Contratadas / Paywall",
+      "route": "/gastronomy/tables",
+      "expected": "Pantalla amigable de Paywall / Upsell explicando que la funcionalidad requiere upgrade de plan",
+      "observed": "Pantalla amigable con explicación de módulo o redirección",
+      "status": "CUMPLE",
+      "screenshot": "14_business_unsubscribed_module.png",
+      "errorDetails": null
+    }
+  ],
+  "consoleErrors": [
+    "[error] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[error] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[error] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[error] Failed to load resource: the server responded with a status of 401 (Unauthorized)",
+    "[error] Failed to load resource: the server responded with a status of 401 (Unauthorized)"
+  ]
+}

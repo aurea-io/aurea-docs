@@ -9,6 +9,12 @@ Acá vive todo lo que necesitás saber sobre el producto, la arquitectura y las 
 
 ## Mapa de documentación
 
+### Estrategia y marca
+
+| Documento | Qué encontrás |
+| --- | --- |
+| [Identidad empresarial](docs/identidad-empresarial.md) | Visión, misión, meta estratégica, propuesta de valor, principios de marca y speech comercial |
+
 ### Módulos dinámicos
 
 | Documento | Qué encontrás |

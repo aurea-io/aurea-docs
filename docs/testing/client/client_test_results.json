@@ -1,0 +1,96 @@
+{
+  "timestamp": "2026-09-04T04:09:22.762Z",
+  "tests": [
+    {
+      "id": "QA-CLI-01",
+      "name": "Portal Público del Comercio (Grand Bistro)",
+      "route": "http://localhost:5175/grand-bistro",
+      "expected": "Renderizado de cabecera con branding, dirección física, contacto y descripción comercial",
+      "observed": "Portal público renderizado en PWA cliente (:5175). Branding (true), Domicilio (true), Teléfono (true). Redirección desde business: true",
+      "status": "CUMPLE",
+      "screenshot": "01_client_portal_grand_bistro.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-CLI-02",
+      "name": "Portal Público de Servicios de Estética (De Santas)",
+      "route": "http://localhost:5175/de-santas",
+      "expected": "Branding adaptado al vertical beauty, mensaje de bienvenida y selector de servicios",
+      "observed": "Portal renderizado con tema visual y selector de servicios/turnos: true",
+      "status": "CUMPLE",
+      "screenshot": "02_client_portal_de_santas.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-CLI-03",
+      "name": "Exploración de Catálogo y Menú Gastronómico",
+      "route": "http://localhost:5175/grand-bistro",
+      "expected": "Grilla de artículos disponibles con precios, descripciones y selector de compra",
+      "observed": "Artículos visibles en carta gastronómica: 8 ítems interactivos con precios en ARS",
+      "status": "CUMPLE",
+      "screenshot": "03_client_catalog_browsing.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-CLI-04",
+      "name": "Formulario de Pedido Takeaway / Online",
+      "route": "http://localhost:5175/grand-bistro",
+      "expected": "Selección de producto, modalidad de retiro e ingreso de datos de contacto del cliente",
+      "observed": "Ítem agregado al carrito, modalidad takeaway y campos completados (Datos cargados)",
+      "status": "CUMPLE",
+      "screenshot": "04_client_order_form.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-CLI-05",
+      "name": "Confirmación de Pedido y Emisión de Comprobante",
+      "route": "http://localhost:5175/grand-bistro",
+      "expected": "Mensaje visual de confirmación de pedido con instrucciones de retiro y código de orden",
+      "observed": "Transacción procesada en Client Backend (:3003) y persistida en Atlas. Comprobante emitido: true",
+      "status": "CUMPLE",
+      "screenshot": "05_client_order_confirmation.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-CLI-06",
+      "name": "Flujo de Reserva de Turnos desde Vista Cliente",
+      "route": "http://localhost:5175/de-santas",
+      "expected": "Selección interactiva de servicio, horario y confirmación de turno con comprobante",
+      "observed": "Servicio seleccionado, franja asignada y reserva persistida en Atlas. Confirmado: true",
+      "status": "CUMPLE",
+      "screenshot": "06_client_service_booking_flow.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-CLI-07",
+      "name": "Responsividad en Dispositivos Móviles (Viewport 390x844)",
+      "route": "http://localhost:5175/grand-bistro (Mobile)",
+      "expected": "Diseño fluido vertical sin desbordes horizontales, legibilidad óptima y botones táctiles adaptados",
+      "observed": "Viewport smartphone iPhone 14 validado sin overflow horizontal. Layout táctil operativo: true",
+      "status": "CUMPLE",
+      "screenshot": "07_client_mobile_view.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-CLI-08",
+      "name": "Auditoría de Desacoplamiento Arquitectónico (client-frontend & client-backend)",
+      "route": "Arquitectura Bounded Contexts",
+      "expected": "PWA desacoplada en :5175 y API pública en :3003, separadas de la gestión backoffice de business",
+      "observed": "Arquitectura desacoplada en producción local. client-frontend (v1.0.0) en :5175, client-backend (v1.0.0) en :3003. Funciones públicas removidas de business-frontend.",
+      "status": "CUMPLE",
+      "screenshot": "07_client_mobile_view.png",
+      "errorDetails": null
+    },
+    {
+      "id": "QA-CLI-09",
+      "name": "Taxonomía Canónica de 3 Niveles en Client (Sección -> Página -> Módulo)",
+      "route": "http://localhost:5175/:slug/<sección>/<página>",
+      "expected": "Estructura jerárquica por secciones (/commerce, /services, /gastronomy) en client-frontend y client-backend con contratos tipados",
+      "observed": "Secciones implementadas: commerce (catalog/orders), services (bookings), gastronomy (tables). Rutas jerárquicas operativas y decorators @FeatureDomain vinculados: true",
+      "status": "CUMPLE",
+      "screenshot": "09_client_canonical_taxonomy.png",
+      "errorDetails": null
+    }
+  ],
+  "consoleErrors": []
+}
