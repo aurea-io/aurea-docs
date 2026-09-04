@@ -14,6 +14,7 @@ Acá vive todo lo que necesitás saber sobre el producto, la arquitectura y las 
 | Documento | Qué encontrás |
 | --- | --- |
 | [Identidad empresarial](docs/identidad-empresarial.md) | Visión, misión, meta estratégica, propuesta de valor, principios de marca y speech comercial |
+| [Orux](docs/orux/README.md) | Nueva identidad empresarial, estrategia comercial, crecimiento y redes sociales |
 
 ### Módulos dinámicos
 
